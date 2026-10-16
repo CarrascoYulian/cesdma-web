@@ -7,8 +7,9 @@ import WaLink from './WaLink.astro';
 import { slides, src, srcset } from '../data/photos';
 ---
 <section class="hero" aria-labelledby="hero-title">
-  <div class="container hero__grid">
-    <div class="hero__copy">
+  <div class="hero__banner">
+    <!-- El texto va primero en el código (orden de lectura) y se superpone a las fotos con un degradado blanco. -->
+    <div class="hero__content">
       <p class="eyebrow">Centro de Sonografía y Diagnósticos Médico</p>
       <h1 id="hero-title">
         Atención cercana y estudios diagnósticos <em>en un mismo lugar.</em>
@@ -27,101 +28,111 @@ import { slides, src, srcset } from '../data/photos';
           <Icon name="arrow-down" size={18} />
         </a>
       </div>
-      <ul class="hero__facts" aria-label="Lo que encontrarás en CESDMA">
-        <li><Icon name="stethoscope" size={18} /> Medicina general y más de {site.specialtiesCount.value} especialidades</li>
-        <li><Icon name="scan-heart" size={18} /> Sonografías y estudios cardiovasculares</li>
-        <li><Icon name="message-circle" size={18} /> Citas coordinadas por WhatsApp</li>
-      </ul>
     </div>
 
-    <div class="hero__visual">
-      <section class="carousel" aria-roledescription="carrusel" aria-label="Servicios de CESDMA" data-carousel>
-        <div class="carousel__frame">
-          <div class="carousel__track" aria-live="polite" data-carousel-track>
-            {
-              slides.map((s, i) => (
-                <div
-                  class:list={['carousel__slide', { 'is-active': i === 0 }]}
-                  role="group"
-                  aria-roledescription="diapositiva"
-                  aria-label={`${i + 1} de ${slides.length}: ${s.title}`}
-                  aria-hidden={i === 0 ? undefined : 'true'}
-                  data-slide
-                >
-                  <img
-                    src={src(s.photo, 1200)}
-                    srcset={srcset(s.photo, [800, 1200])}
-                    sizes="(min-width: 960px) 46vw, (min-width: 640px) 90vw, 100vw"
-                    alt={s.photo.alt}
-                    width="1200"
-                    height="800"
-                    loading={i === 0 ? 'eager' : 'lazy'}
-                    fetchpriority={i === 0 ? 'high' : 'low'}
-                    decoding={i === 0 ? 'sync' : 'async'}
-                    class="carousel__img"
-                  />
-                  <div class="carousel__caption">
-                    <p class="carousel__title">{s.title}</p>
-                    <p class="carousel__text">{s.text}</p>
-                    <a href={s.href} class="link-arrow carousel__link">
-                      Ver más<span class="sr-only"> sobre {s.title}</span>
-                      <Icon name="arrow-right" size={16} />
-                    </a>
-                  </div>
-                </div>
-              ))
-            }
-          </div>
-          <p class="carousel__tag">Imagen ilustrativa</p>
-        </div>
+    <div class="hero__fade" aria-hidden="true"></div>
 
-        <div class="carousel__controls" data-carousel-controls hidden>
-          <div class="carousel__dots" role="group" aria-label="Elegir imagen">
-            {
-              slides.map((s, i) => (
-                <button
-                  type="button"
-                  class="carousel__dot"
-                  aria-label={`Mostrar ${i + 1}: ${s.title}`}
-                  aria-current={i === 0 ? 'true' : 'false'}
-                  data-carousel-dot={i}
-                />
-              ))
-            }
-          </div>
-          <div class="carousel__buttons">
-            <button type="button" class="carousel__btn" data-carousel-play aria-label="Pausar el carrusel" data-state="paused">
-              <Icon name="pause" size={18} class="carousel__icon-pause" />
-              <Icon name="play" size={18} class="carousel__icon-play" />
-            </button>
-            <button type="button" class="carousel__btn" data-carousel-prev aria-label="Imagen anterior">
-              <Icon name="chevron-left" size={20} />
-            </button>
-            <button type="button" class="carousel__btn" data-carousel-next aria-label="Imagen siguiente">
-              <Icon name="chevron-right" size={20} />
-            </button>
-          </div>
+    <section class="carousel" aria-roledescription="carrusel" aria-label="Servicios de CESDMA" data-carousel>
+      <div class="carousel__track" aria-live="polite" data-carousel-track>
+        {
+          slides.map((s, i) => (
+            <div
+              class:list={['carousel__slide', { 'is-active': i === 0 }]}
+              role="group"
+              aria-roledescription="diapositiva"
+              aria-label={`${i + 1} de ${slides.length}: ${s.title}`}
+              aria-hidden={i === 0 ? undefined : 'true'}
+              data-slide
+            >
+              <img
+                src={src(s.photo, 1200)}
+                srcset={srcset(s.photo, [800, 1200])}
+                sizes="(min-width: 1024px) 66vw, 100vw"
+                alt={s.photo.alt}
+                width="1200"
+                height="800"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                fetchpriority={i === 0 ? 'high' : 'low'}
+                decoding={i === 0 ? 'sync' : 'async'}
+                class="carousel__img"
+              />
+              <p class="carousel__caption">
+                <a href={s.href} class="carousel__link">
+                  {s.title}<span class="sr-only">: {s.text} Ver más</span>
+                  <Icon name="arrow-right" size={16} />
+                </a>
+                <span class="carousel__tag">Imagen ilustrativa</span>
+              </p>
+            </div>
+          ))
+        }
+      </div>
+
+      <div class="carousel__controls" data-carousel-controls hidden>
+        <div class="carousel__dots" role="group" aria-label="Elegir imagen">
+          {
+            slides.map((s, i) => (
+              <button
+                type="button"
+                class="carousel__dot"
+                aria-label={`Mostrar ${i + 1}: ${s.title}`}
+                aria-current={i === 0 ? 'true' : 'false'}
+                data-carousel-dot={i}
+              />
+            ))
+          }
         </div>
-      </section>
-    </div>
+        <button type="button" class="carousel__btn" data-carousel-play aria-label="Pausar el carrusel" data-state="paused">
+          <Icon name="pause" size={18} class="carousel__icon-pause" />
+          <Icon name="play" size={18} class="carousel__icon-play" />
+        </button>
+        <button type="button" class="carousel__btn" data-carousel-prev aria-label="Imagen anterior">
+          <Icon name="chevron-left" size={20} />
+        </button>
+        <button type="button" class="carousel__btn" data-carousel-next aria-label="Imagen siguiente">
+          <Icon name="chevron-right" size={20} />
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <div class="container">
+    <ul class="hero__facts" aria-label="Lo que encontrarás en CESDMA">
+      <li><Icon name="stethoscope" size={18} /> Medicina general y más de {site.specialtiesCount.value} especialidades</li>
+      <li><Icon name="scan-heart" size={18} /> Sonografías y estudios cardiovasculares</li>
+      <li><Icon name="message-circle" size={18} /> Citas coordinadas por WhatsApp</li>
+    </ul>
   </div>
 </section>
 
 <style>
   .hero {
+    padding-block: clamp(1rem, 0.5rem + 1.5vw, 2rem) clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+  }
+
+  /* Banner a todo el ancho: fotos detrás, degradado blanco y texto encima. */
+  .hero__banner {
+    --pad: clamp(1.25rem, 0.5rem + 3vw, 4.5rem);
+    --img-h: clamp(260px, 72vw, 460px);
     position: relative;
-    padding-block: clamp(2.5rem, 1.5rem + 4vw, 5.5rem) clamp(3rem, 2rem + 4vw, 6rem);
-    overflow: hidden;
-  }
-  .hero__grid {
+    isolation: isolate;
     display: grid;
-    gap: clamp(2.5rem, 1.5rem + 3vw, 4rem);
-    align-items: center;
+    width: min(100% - 2 * var(--gutter), 1440px);
+    margin-inline: auto;
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid var(--c-line);
   }
-  .hero__copy {
+
+  .hero__content {
+    position: relative;
+    z-index: 2;
+    grid-row: 2;
     display: grid;
     gap: var(--sp-5);
-    max-width: 38rem;
+    margin-top: -2.5rem;
+    padding: 0 var(--pad) var(--pad);
   }
   h1 {
     font-size: var(--fs-display);
@@ -143,46 +154,26 @@ import { slides, src, srcset } from '../data/photos';
     gap: var(--sp-3);
     padding-top: var(--sp-2);
   }
-  .hero__facts {
-    list-style: none;
-    display: grid;
-    gap: var(--sp-2);
-    padding-top: var(--sp-5);
-    border-top: 1px solid var(--c-line);
-    font-size: var(--fs-small);
-    color: var(--c-ink);
-  }
-  .hero__facts li {
-    display: flex;
-    align-items: center;
-    gap: var(--sp-3);
-  }
-  .hero__facts :global(svg) {
-    color: var(--c-teal-700);
-    flex: none;
+
+  /* Móvil: foto arriba, se funde en blanco hacia abajo. */
+  .hero__fade {
+    position: absolute;
+    z-index: 1;
+    inset: 0 0 auto;
+    height: var(--img-h);
+    background: linear-gradient(180deg, rgb(255 255 255 / 0) 35%, #fff calc(100% - 2.5rem));
+    pointer-events: none;
   }
 
-  /* Carrusel */
-  .hero__visual {
-    position: relative;
-    min-width: 0;
-  }
   .carousel {
-    display: grid;
-    gap: var(--sp-3);
-  }
-  .carousel__frame {
     position: relative;
-    aspect-ratio: 4 / 3;
-    border-radius: var(--r-xl);
-    overflow: hidden;
-    background: var(--c-bg-soft);
-    border: 1px solid var(--c-line);
+    grid-row: 1;
+    height: var(--img-h);
+    touch-action: pan-y;
   }
   .carousel__track {
     position: absolute;
     inset: 0;
-    touch-action: pan-y;
   }
   .carousel__slide {
     position: absolute;
@@ -199,64 +190,67 @@ import { slides, src, srcset } from '../data/photos';
     height: 100%;
     object-fit: cover;
   }
+
   .carousel__caption {
     position: absolute;
-    left: var(--sp-4);
-    bottom: var(--sp-4);
-    max-width: min(300px, calc(100% - 2 * var(--sp-4)));
-    padding: var(--sp-3) var(--sp-4);
-    background: #fff;
-    border: 1px solid var(--c-line);
+    z-index: 3;
+    top: var(--sp-3);
+    left: var(--sp-3);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: var(--sp-2) var(--sp-4);
     border-radius: var(--r-md);
-    box-shadow: var(--shadow-lg);
-  }
-  .carousel__title {
-    font-family: var(--font-display);
-    font-weight: 700;
-    color: var(--c-ink);
-    line-height: var(--lh-snug);
-  }
-  .carousel__text {
-    font-size: var(--fs-xs);
-    color: var(--c-muted);
-    margin-top: 2px;
+    background: rgb(255 255 255 / 0.94);
+    box-shadow: var(--shadow-md);
   }
   .carousel__link {
     display: inline-flex;
     align-items: center;
     gap: 0.35em;
-    min-height: 32px;
-    font-size: var(--fs-small);
-    font-weight: 600;
+    min-height: 28px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--c-ink);
+    text-decoration: none;
+  }
+  .carousel__link:hover {
+    color: var(--c-teal-700);
+    text-decoration: underline;
+  }
+  .carousel__link :global(svg) {
+    color: var(--c-teal-700);
   }
   .carousel__tag {
-    position: absolute;
-    top: var(--sp-3);
-    right: var(--sp-3);
-    padding: 2px 10px;
-    border-radius: var(--r-pill);
-    background: rgb(255 255 255 / 0.92);
-    color: var(--c-ink);
     font-size: var(--fs-xs);
-    font-weight: 500;
+    color: var(--c-muted);
   }
+
   .carousel__controls {
+    position: absolute;
+    z-index: 3;
+    right: var(--sp-3);
+    bottom: calc(2.5rem + var(--sp-2));
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--sp-3);
+    gap: 2px;
+    padding: 0 4px;
+    border-radius: var(--r-pill);
+    background: rgb(255 255 255 / 0.94);
+    box-shadow: var(--shadow-md);
   }
   .carousel__controls[hidden] {
     display: none;
   }
   .carousel__dots {
     display: flex;
-    gap: 2px;
+    margin-right: var(--sp-1);
   }
   .carousel__dot {
     display: grid;
     place-items: center;
-    width: 32px;
+    width: 28px;
     height: 44px;
     padding: 0;
     border: 0;
@@ -274,12 +268,8 @@ import { slides, src, srcset } from '../data/photos';
       background-color var(--dur-fast) ease;
   }
   .carousel__dot[aria-current='true']::before {
-    width: 24px;
+    width: 22px;
     background: var(--c-teal-700);
-  }
-  .carousel__buttons {
-    display: flex;
-    gap: var(--sp-2);
   }
   .carousel__btn {
     display: grid;
@@ -287,16 +277,13 @@ import { slides, src, srcset } from '../data/photos';
     width: 44px;
     height: 44px;
     border-radius: var(--r-pill);
-    border: 1px solid var(--c-line-strong);
-    background: #fff;
+    border: 0;
+    background: none;
     color: var(--c-ink);
     cursor: pointer;
-    transition:
-      border-color var(--dur-fast) ease,
-      background-color var(--dur-fast) ease;
+    transition: background-color var(--dur-fast) ease;
   }
   .carousel__btn:hover {
-    border-color: var(--c-teal-700);
     background: var(--c-bg-soft);
   }
   .carousel__btn[data-state='playing'] :global(.carousel__icon-play),
@@ -304,15 +291,33 @@ import { slides, src, srcset } from '../data/photos';
     display: none;
   }
 
+  .hero__facts {
+    list-style: none;
+    display: grid;
+    gap: var(--sp-2) var(--sp-6);
+    padding: var(--sp-5) 0 0;
+    font-size: var(--fs-small);
+    color: var(--c-ink);
+  }
+  .hero__facts li {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-3);
+  }
+  .hero__facts :global(svg) {
+    color: var(--c-teal-700);
+    flex: none;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .carousel__slide {
       transition:
-        opacity 0.7s var(--ease-out),
-        visibility 0s linear 0.7s;
+        opacity 0.6s var(--ease-out),
+        visibility 0s linear 0.6s;
     }
     .carousel__slide.is-active {
       transition:
-        opacity 0.7s var(--ease-out),
+        opacity 0.6s var(--ease-out),
         visibility 0s;
     }
   }
@@ -321,21 +326,59 @@ import { slides, src, srcset } from '../data/photos';
     .hero__actions .btn {
       flex: 1 1 100%;
     }
-    .carousel__caption {
-      left: var(--sp-3);
-      bottom: var(--sp-3);
-      padding: var(--sp-2) var(--sp-3);
-    }
-    .carousel__text {
+    /* En pantallas pequeñas bastan los puntos, la pausa y el deslizamiento. */
+    .carousel__btn[data-carousel-prev],
+    .carousel__btn[data-carousel-next] {
       display: none;
     }
   }
-  @media (min-width: 960px) {
-    .hero__grid {
-      grid-template-columns: 1.05fr 1fr;
+  @media (min-width: 720px) {
+    .hero__facts {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
     }
-    .carousel__frame {
-      aspect-ratio: 1 / 1;
+  }
+
+  /* Escritorio: el texto queda a la izquierda sobre blanco y la foto
+     aparece a la derecha, fundiéndose con el degradado. */
+  @media (min-width: 1024px) {
+    .hero__banner {
+      --copy: calc(var(--pad) + min(34rem, 44vw));
+      min-height: clamp(520px, 72vh, 640px);
+      align-items: center;
+    }
+    .hero__content {
+      grid-row: 1;
+      max-width: var(--copy);
+      margin: 0;
+      padding: var(--pad) 0 var(--pad) var(--pad);
+    }
+    .hero__fade {
+      inset: 0;
+      height: auto;
+      background: linear-gradient(
+        90deg,
+        #fff 0,
+        #fff calc(var(--copy) + 1rem),
+        rgb(255 255 255 / 0.75) calc(var(--copy) + 6rem),
+        rgb(255 255 255 / 0) calc(var(--copy) + 16rem)
+      );
+    }
+    .carousel {
+      position: absolute;
+      inset: 0 0 0 calc(var(--pad) + 18rem);
+      height: auto;
+    }
+    .carousel__caption {
+      left: auto;
+      right: var(--sp-5);
+      top: var(--sp-5);
+      align-items: flex-end;
+    }
+    .carousel__controls {
+      right: var(--sp-5);
+      bottom: var(--sp-5);
     }
   }
 </style>

@@ -213,9 +213,10 @@ function initActiveNav() {
 }
 
 /* ---------- Carrusel del inicio ----------
- * Patrón de carrusel de WAI-ARIA: se detiene al pasar el ratón o al
- * enfocar un elemento dentro, tiene botón de pausa y no avanza solo si
- * la persona pidió reducir el movimiento.
+ * Banner del inicio: cambia de imagen cada 3 segundos. Patrón de
+ * carrusel de WAI-ARIA: se detiene al enfocar un elemento dentro, tiene
+ * botón de pausa y no avanza solo si la persona pidió reducir el
+ * movimiento.
  */
 function initCarousel() {
   const root = $('[data-carousel]');
@@ -227,14 +228,13 @@ function initCarousel() {
   const dots = $$<HTMLButtonElement>('[data-carousel-dot]', root);
   if (slides.length < 2 || !track || !controls || !play) return;
 
-  const INTERVAL = 6000;
+  const INTERVAL = 3000;
   let current = 0;
   let playing = !reduceMotion;
-  let hovered = false;
   let focused = false;
   let timer = 0;
 
-  const rotating = () => playing && !hovered && !focused && !document.hidden;
+  const rotating = () => playing && !focused && !document.hidden;
 
   const show = (n: number) => {
     current = (n + slides.length) % slides.length;
@@ -276,14 +276,6 @@ function initCarousel() {
   );
   play.addEventListener('click', () => setPlaying(!playing));
 
-  root.addEventListener('mouseenter', () => {
-    hovered = true;
-    sync();
-  });
-  root.addEventListener('mouseleave', () => {
-    hovered = false;
-    sync();
-  });
   root.addEventListener('focusin', () => {
     focused = true;
     sync();
@@ -299,7 +291,7 @@ function initCarousel() {
   // Deslizar con el dedo en pantallas táctiles.
   let startX = 0;
   let startY = 0;
-  track.addEventListener(
+  root.addEventListener(
     'touchstart',
     (e) => {
       startX = e.touches[0].clientX;
@@ -307,7 +299,7 @@ function initCarousel() {
     },
     { passive: true },
   );
-  track.addEventListener(
+  root.addEventListener(
     'touchend',
     (e) => {
       const dx = e.changedTouches[0].clientX - startX;
