@@ -212,6 +212,118 @@ function initActiveNav() {
   });
 }
 
+/* ---------- Carrusel del inicio ----------
+ * Patrón de carrusel de WAI-ARIA: se detiene al pasar el ratón o al
+ * enfocar un elemento dentro, tiene botón de pausa y no avanza solo si
+ * la persona pidió reducir el movimiento.
+ */
+function initCarousel() {
+  const root = $('[data-carousel]');
+  if (!root) return;
+  const slides = $$('[data-slide]', root);
+  const track = $('[data-carousel-track]', root);
+  const controls = $('[data-carousel-controls]', root);
+  const play = $<HTMLButtonElement>('[data-carousel-play]', root);
+  const dots = $$<HTMLButtonElement>('[data-carousel-dot]', root);
+  if (slides.length < 2 || !track || !controls || !play) return;
+
+  const INTERVAL = 6000;
+  let current = 0;
+  let playing = !reduceMotion;
+  let hovered = false;
+  let focused = false;
+  let timer = 0;
+
+  const rotating = () => playing && !hovered && !focused && !document.hidden;
+
+  const show = (n: number) => {
+    current = (n + slides.length) % slides.length;
+    slides.forEach((s, i) => {
+      const active = i === current;
+      s.classList.toggle('is-active', active);
+      if (active) s.removeAttribute('aria-hidden');
+      else s.setAttribute('aria-hidden', 'true');
+    });
+    dots.forEach((d, i) => d.setAttribute('aria-current', String(i === current)));
+  };
+
+  const sync = () => {
+    window.clearInterval(timer);
+    track.setAttribute('aria-live', rotating() ? 'off' : 'polite');
+    if (rotating()) timer = window.setInterval(() => show(current + 1), INTERVAL);
+  };
+
+  const setPlaying = (value: boolean) => {
+    playing = value;
+    play.dataset.state = value ? 'playing' : 'paused';
+    play.setAttribute('aria-label', value ? 'Pausar el carrusel' : 'Reproducir el carrusel');
+    sync();
+  };
+
+  $('[data-carousel-prev]', root)?.addEventListener('click', () => {
+    show(current - 1);
+    sync();
+  });
+  $('[data-carousel-next]', root)?.addEventListener('click', () => {
+    show(current + 1);
+    sync();
+  });
+  dots.forEach((d, i) =>
+    d.addEventListener('click', () => {
+      show(i);
+      sync();
+    }),
+  );
+  play.addEventListener('click', () => setPlaying(!playing));
+
+  root.addEventListener('mouseenter', () => {
+    hovered = true;
+    sync();
+  });
+  root.addEventListener('mouseleave', () => {
+    hovered = false;
+    sync();
+  });
+  root.addEventListener('focusin', () => {
+    focused = true;
+    sync();
+  });
+  root.addEventListener('focusout', (e) => {
+    if (!root.contains(e.relatedTarget as Node | null)) {
+      focused = false;
+      sync();
+    }
+  });
+  document.addEventListener('visibilitychange', sync);
+
+  // Deslizar con el dedo en pantallas táctiles.
+  let startX = 0;
+  let startY = 0;
+  track.addEventListener(
+    'touchstart',
+    (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+    },
+    { passive: true },
+  );
+  track.addEventListener(
+    'touchend',
+    (e) => {
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+        show(current + (dx < 0 ? 1 : -1));
+        sync();
+      }
+    },
+    { passive: true },
+  );
+
+  controls.hidden = false;
+  setPlaying(playing);
+}
+
 /* ---------- Medición opcional de contactos ----------
  * No se envía nada a terceros. Emite un evento del navegador que una
  * herramienta de analítica respetuosa con la privacidad puede escuchar:
@@ -232,6 +344,7 @@ function initTracking() {
 
 initHeader();
 initMenu();
+initCarousel();
 initFilters();
 initReveal();
 initMap();

@@ -79,7 +79,10 @@ const hours = site.hours.value;
       <p class="footer__disclaimer">
         La información de este sitio es general y no sustituye la consulta con un profesional de la salud.
       </p>
-      <a href="/privacidad/">Aviso de privacidad</a>
+      <p class="footer__legal">
+        <a href="/privacidad/">Aviso de privacidad</a>
+        <a href="/creditos/">Créditos de imágenes</a>
+      </p>
     </div>
   </div>
 </footer>
@@ -95,6 +98,11 @@ const hours = site.hours.value;
   .footer a {
     color: #fff;
     text-decoration: none;
+  }
+  .footer__legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2) var(--sp-5);
   }
   .footer a:hover {
     text-decoration: underline;

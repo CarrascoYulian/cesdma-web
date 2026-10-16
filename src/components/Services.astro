@@ -3,6 +3,10 @@ import { categories, services, serviceUrl } from '../data/services';
 import Icon from './Icon.astro';
 import BrandIcon from './BrandIcon.astro';
 import WaLink from './WaLink.astro';
+import { photos, src, srcset, type Photo } from '../data/photos';
+import { artSvg } from '../data/art';
+
+const photoFor = (slug: string): Photo | undefined => (photos as Record<string, Photo>)[slug];
 
 const catName = Object.fromEntries(categories.map((c) => [c.id, c.short]));
 ---
@@ -40,6 +44,22 @@ const catName = Object.fromEntries(categories.map((c) => [c.id, c.short]));
             data-reveal
             style={`--reveal-i:${i % 3}`}
           >
+            <div class="card__media">
+              {photoFor(s.slug) ? (
+                <img
+                  src={src(photoFor(s.slug)!, 800)}
+                  srcset={srcset(photoFor(s.slug)!, [480, 800])}
+                  sizes={s.featured ? '(min-width: 1024px) 60vw, (min-width: 640px) 46vw, 100vw' : '(min-width: 1024px) 30vw, (min-width: 640px) 46vw, 100vw'}
+                  alt=""
+                  width="800"
+                  height="533"
+                  loading="lazy"
+                  decoding="async"
+                />
+              ) : (
+                <Fragment set:html={artSvg(s.slug)} />
+              )}
+            </div>
             <div class="card__top">
               <span class="card__icon">
                 <Icon name={s.icon} size={s.featured ? 28 : 22} />
@@ -64,6 +84,10 @@ const catName = Object.fromEntries(categories.map((c) => [c.id, c.short]));
         ))
       }
     </ul>
+    <p class="services__note">
+      Las fotos son ilustrativas y no corresponden a las instalaciones ni al personal de CESDMA.
+      <a href="/creditos/">Créditos de imágenes</a>
+    </p>
   </div>
 </section>
 
@@ -115,6 +139,11 @@ const catName = Object.fromEntries(categories.map((c) => [c.id, c.short]));
     color: #fff;
   }
 
+  .services__note {
+    margin-top: var(--sp-5);
+    font-size: var(--fs-xs);
+    color: var(--c-muted);
+  }
   .services__grid {
     list-style: none;
     display: grid;
@@ -133,6 +162,28 @@ const catName = Object.fromEntries(categories.map((c) => [c.id, c.short]));
       border-color var(--dur-med) ease,
       box-shadow var(--dur-med) ease,
       transform var(--dur-med) var(--ease-out);
+  }
+  .card__media {
+    margin: calc(-1 * var(--sp-5)) calc(-1 * var(--sp-5)) var(--sp-1);
+    aspect-ratio: 3 / 2;
+    overflow: hidden;
+    border-radius: calc(var(--r-lg) - 1px) calc(var(--r-lg) - 1px) 0 0;
+    background: var(--c-bg-soft);
+  }
+  .card__media img,
+  .card__media :global(svg) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .card__media img {
+      transition: transform var(--dur-slow) var(--ease-out);
+    }
+    .card:hover .card__media img {
+      transform: scale(1.03);
+    }
   }
   .card[hidden] {
     display: none;
@@ -214,6 +265,9 @@ const catName = Object.fromEntries(categories.map((c) => [c.id, c.short]));
     background: linear-gradient(160deg, var(--c-bg-tint) 0%, #fff 70%);
     border-color: #cfe8e6;
   }
+  .card--featured .card__media {
+    aspect-ratio: 16 / 9;
+  }
   .card--featured .card__icon {
     width: 56px;
     height: 56px;
@@ -252,6 +306,14 @@ const catName = Object.fromEntries(categories.map((c) => [c.id, c.short]));
     .card--featured {
       grid-column: span 2;
       padding: var(--sp-6);
+    }
+    .card--featured .card__media {
+      margin: calc(-1 * var(--sp-6)) calc(-1 * var(--sp-6)) var(--sp-1);
+      aspect-ratio: 21 / 9;
+    }
+    .services__grid.is-filtered .card--featured .card__media {
+      margin: calc(-1 * var(--sp-5)) calc(-1 * var(--sp-5)) var(--sp-1);
+      aspect-ratio: 3 / 2;
     }
     .services__grid.is-filtered .card--featured {
       grid-column: span 1;

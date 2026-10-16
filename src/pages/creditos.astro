@@ -1,0 +1,81 @@
+---
+import Base from '../layouts/Base.astro';
+import { photos, LICENSE, thumb, type Photo } from '../data/photos';
+
+const list = Object.values(photos) as Photo[];
+---
+<Base title="Créditos de imágenes" description="Fuentes y licencias de las fotos ilustrativas usadas en el sitio de CESDMA.">
+  <article class="container legal">
+    <h1>Créditos de imágenes</h1>
+    <p>
+      Las fotos de este sitio son <strong>imágenes ilustrativas</strong> de bancos de imágenes de libre uso. No muestran
+      las instalaciones, los equipos ni al personal de CESDMA. Todas se publican bajo
+      <a href={LICENSE.url} target="_blank" rel="noopener noreferrer">{LICENSE.name}</a>, por lo que no requieren
+      atribución; aun así, las acreditamos.
+    </p>
+
+    <ul class="credits">
+      {
+        list.map((p) => (
+          <li class="credits__item">
+            <img src={thumb(p)} alt="" width="120" height="80" loading="lazy" decoding="async" />
+            <div>
+              <p class="credits__alt">{p.alt}</p>
+              <p class="credits__by">
+                {p.credit.author} ·{' '}
+                <a href={p.credit.url} target="_blank" rel="noopener noreferrer">
+                  {p.credit.source}
+                  <span class="sr-only"> (abre en otra pestaña)</span>
+                </a>
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </article>
+</Base>
+
+<style>
+  .legal {
+    max-width: calc(46rem + 2 * var(--gutter));
+    padding-block: var(--sp-7) var(--sp-8);
+  }
+  h1 {
+    font-size: clamp(2rem, 1.6rem + 1.8vw, 2.75rem);
+    margin-bottom: var(--sp-4);
+  }
+  .legal > p {
+    color: var(--c-muted);
+  }
+  strong {
+    color: var(--c-ink);
+  }
+  .credits {
+    list-style: none;
+    display: grid;
+    gap: var(--sp-4);
+    margin-top: var(--sp-6);
+    padding: 0;
+  }
+  .credits__item {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-4);
+  }
+  .credits__item img {
+    flex: none;
+    width: 120px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--r-sm);
+  }
+  .credits__alt {
+    font-weight: 600;
+    color: var(--c-ink);
+  }
+  .credits__by {
+    font-size: var(--fs-small);
+    color: var(--c-muted);
+  }
+</style>
