@@ -1,0 +1,78 @@
+---
+import Base from '../layouts/Base.astro';
+import Pending from '../components/Pending.astro';
+import { site } from '../config/site';
+import { waLink } from '../lib/whatsapp';
+import { waMessages } from '../config/whatsapp';
+---
+<Base title="Aviso de privacidad" description="Cómo trata CESDMA la información de las personas que visitan su sitio web.">
+  <article class="container legal">
+    <h1>Aviso de privacidad <Pending verified={false} note="Texto base: debe revisarlo un asesor legal de CESDMA." /></h1>
+    <p class="legal__meta">Última actualización: octubre de 2026</p>
+
+    <h2>Quiénes somos</h2>
+    <p>
+      Este sitio pertenece a {site.shortName}, {site.legalName}. Si tienes preguntas sobre este aviso, puedes
+      <a href={waLink(waMessages.general)} target="_blank" rel="noopener noreferrer">escribirnos por WhatsApp</a>.
+    </p>
+
+    <h2>Qué información recogemos en este sitio</h2>
+    <p>
+      Este sitio web <strong>no tiene formularios que envíen datos a nuestros servidores</strong>, no crea cuentas de
+      usuario y no utiliza cookies de publicidad ni herramientas de analítica.
+    </p>
+    <p>
+      El asistente “Prepara tu mensaje” funciona solo en tu navegador: el texto que escribes no se guarda ni se nos
+      envía; únicamente se usa para preparar el mensaje que tú decides enviar desde WhatsApp.
+    </p>
+
+    <h2>WhatsApp y otros servicios de terceros</h2>
+    <p>
+      Al pulsar un botón de WhatsApp, sales de este sitio y la conversación se rige por las condiciones y la política
+      de privacidad de WhatsApp (Meta). Te pedimos que no envíes por ese medio resultados, documentos clínicos ni
+      detalles de salud: para coordinar una cita basta con tu nombre y el servicio que necesitas.
+    </p>
+    <p>
+      El mapa interactivo de Google Maps solo se carga si lo solicitas. Al cargarlo, Google puede recibir datos de tu
+      navegación según su propia política de privacidad. También puedes abrir la ubicación directamente en la
+      aplicación de mapas.
+    </p>
+
+    <h2>Información médica</h2>
+    <p>
+      El contenido de este sitio es informativo y general. No sustituye la consulta con un profesional de la salud.
+      Los datos de salud que compartas durante tu atención en el centro se tratan de forma confidencial.
+    </p>
+
+    <h2>Cambios en este aviso</h2>
+    <p>Podemos actualizar este aviso. La fecha de la última actualización aparece al inicio de esta página.</p>
+  </article>
+</Base>
+
+<style>
+  .legal {
+    max-width: calc(46rem + 2 * var(--gutter));
+    padding-block: var(--sp-7) var(--sp-8);
+  }
+  h1 {
+    font-size: clamp(2rem, 1.6rem + 1.8vw, 2.75rem);
+  }
+  .legal__meta {
+    color: var(--c-muted);
+    margin: var(--sp-3) 0 var(--sp-6);
+    font-size: var(--fs-small);
+  }
+  h2 {
+    font-size: 1.375rem;
+    margin: var(--sp-6) 0 var(--sp-3);
+  }
+  p + p {
+    margin-top: var(--sp-3);
+  }
+  p {
+    color: var(--c-muted);
+  }
+  strong {
+    color: var(--c-ink);
+  }
+</style>

@@ -1,0 +1,252 @@
+---
+import { site } from '../config/site';
+import { waMessages } from '../config/whatsapp';
+import { telLink } from '../lib/whatsapp';
+import Logo from './Logo.astro';
+import Icon from './Icon.astro';
+import BrandIcon from './BrandIcon.astro';
+import WaLink from './WaLink.astro';
+
+const nav = [
+  { label: 'Inicio', href: '/' },
+  { label: 'Servicios', href: '/#servicios' },
+  { label: 'Especialidades', href: '/#especialidades' },
+  { label: 'Nosotros', href: '/#nosotros' },
+  { label: 'Ubicación y contacto', href: '/#contacto' },
+];
+const path = Astro.url.pathname;
+---
+<header class="header" data-header>
+  <div class="container header__inner">
+    <a href="/" class="header__brand" aria-label={`${site.shortName}, ir al inicio`}>
+      <Logo height={36} />
+    </a>
+
+    <nav class="header__nav" aria-label="Principal">
+      <ul>
+        {
+          nav.map((item) => (
+            <li>
+              <a href={item.href} aria-current={item.href === path ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="header__actions">
+      <WaLink message={waMessages.header} context="header" class="btn btn--sm header__cta">
+        <BrandIcon name="whatsapp" size={18} />
+        <span>Pedir cita</span>
+      </WaLink>
+      <button
+        class="header__toggle"
+        type="button"
+        aria-expanded="false"
+        aria-controls="menu-movil"
+        data-menu-toggle
+      >
+        <span class="sr-only" data-menu-label>Abrir menú</span>
+        <Icon name="menu" class="icon-open" />
+        <Icon name="x" class="icon-close" />
+      </button>
+    </div>
+  </div>
+
+  <div class="mobile-menu" id="menu-movil" hidden data-menu>
+    <nav aria-label="Menú móvil" class="container">
+      <ul class="mobile-menu__list">
+        {
+          nav.map((item) => (
+            <li>
+              <a href={item.href} data-menu-link aria-current={item.href === path ? 'page' : undefined}>
+                {item.label}
+                <Icon name="chevron-right" size={20} />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="mobile-menu__contact">
+        <WaLink message={waMessages.header} context="menu" class="btn btn--block">
+          <BrandIcon name="whatsapp" size={20} />
+          Escribir por WhatsApp
+        </WaLink>
+        <a href={telLink()} class="btn btn--ghost btn--block">
+          <Icon name="phone" />
+          Llamar al {site.phone.value.display}
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgb(255 255 255 / 0.96);
+    border-bottom: 1px solid transparent;
+    transition:
+      border-color var(--dur-med) ease,
+      box-shadow var(--dur-med) ease;
+  }
+  @supports (backdrop-filter: blur(8px)) {
+    .header {
+      background: rgb(255 255 255 / 0.88);
+      backdrop-filter: saturate(1.4) blur(10px);
+    }
+  }
+  .header.is-scrolled {
+    border-bottom-color: var(--c-line);
+    box-shadow: 0 6px 24px -18px rgb(24 52 66 / 0.35);
+  }
+  .header__inner {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-5);
+    height: var(--header-h);
+  }
+  .header__brand {
+    display: inline-flex;
+    text-decoration: none;
+    flex: none;
+    border-radius: var(--r-sm);
+  }
+  .header__nav {
+    display: none;
+    margin-inline: auto;
+  }
+  .header__nav ul {
+    display: flex;
+    gap: var(--sp-1);
+    list-style: none;
+  }
+  .header__nav a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 var(--sp-3);
+    color: var(--c-ink);
+    font-size: var(--fs-small);
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: var(--r-sm);
+  }
+  .header__nav a::after {
+    content: '';
+    position: absolute;
+    left: var(--sp-3);
+    right: var(--sp-3);
+    bottom: 8px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--c-turquoise);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform var(--dur-med) var(--ease-out);
+  }
+  .header__nav a:hover::after,
+  .header__nav a[aria-current='page']::after,
+  .header__nav a.is-active::after {
+    transform: scaleX(1);
+  }
+  .header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    margin-left: auto;
+  }
+  .header__cta span {
+    white-space: nowrap;
+  }
+  .header__toggle {
+    display: inline-grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-pill);
+    background: #fff;
+    cursor: pointer;
+  }
+  .header__toggle :global(.icon-close) {
+    display: none;
+  }
+  .header__toggle[aria-expanded='true'] :global(.icon-open) {
+    display: none;
+  }
+  .header__toggle[aria-expanded='true'] :global(.icon-close) {
+    display: block;
+  }
+  .mobile-menu {
+    border-top: 1px solid var(--c-line);
+    background: #fff;
+    max-height: calc(100dvh - var(--header-h));
+    overflow-y: auto;
+    padding-bottom: calc(var(--sp-5) + env(safe-area-inset-bottom));
+  }
+  .mobile-menu:not([hidden]) {
+    animation: menu-in var(--dur-med) var(--ease-out);
+  }
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+  .mobile-menu__list {
+    list-style: none;
+    padding-block: var(--sp-3);
+  }
+  .mobile-menu__list a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 56px;
+    border-bottom: 1px solid var(--c-line);
+    color: var(--c-ink);
+    font-family: var(--font-display);
+    font-size: 1.125rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .mobile-menu__list a :global(svg) {
+    color: var(--c-teal-700);
+  }
+  .mobile-menu__contact {
+    display: grid;
+    gap: var(--sp-3);
+    padding-top: var(--sp-4);
+  }
+
+  @media (max-width: 379px) {
+    .header__cta span {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+    }
+    .header__cta {
+      width: 44px;
+      padding: 0;
+    }
+  }
+  @media (min-width: 1024px) {
+    .header__nav {
+      display: block;
+    }
+    .header__toggle,
+    .mobile-menu {
+      display: none !important;
+    }
+    .header__actions {
+      margin-left: 0;
+    }
+  }
+</style>

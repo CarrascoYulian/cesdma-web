@@ -1,0 +1,22 @@
+---
+/**
+ * Enlace a WhatsApp con mensaje contextual.
+ * `context` identifica el punto de contacto (para medición opcional).
+ */
+import { waLink } from '../lib/whatsapp';
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends Omit<HTMLAttributes<'a'>, 'href'> {
+  message: string;
+  context: string;
+}
+const { message, context, class: className, ...rest } = Astro.props;
+---
+<a
+  href={waLink(message)}
+  class={className}
+  target="_blank"
+  rel="noopener noreferrer"
+  data-wa={context}
+  {...rest}
+><slot /></a>

@@ -1,0 +1,323 @@
+---
+import { site } from '../config/site';
+import { waMessages } from '../config/whatsapp';
+import { categories, services } from '../data/services';
+import Icon from './Icon.astro';
+import BrandIcon from './BrandIcon.astro';
+import WaLink from './WaLink.astro';
+
+const steps = [
+  { icon: 'clipboard-list', title: 'Elige el servicio', text: 'Revisa nuestros servicios y decide qué consulta o estudio necesitas.' },
+  { icon: 'message-circle', title: 'Escríbenos por WhatsApp', text: 'Envíanos un mensaje con el servicio. Puedes usar el asistente de esta sección.' },
+  { icon: 'calendar-check', title: 'Coordina tu cita', text: 'Acordamos contigo la fecha, el horario y las indicaciones previas, si las hay.' },
+];
+---
+<section id="citas" class="section citas" aria-labelledby="citas-title">
+  <div class="container citas__grid">
+    <div>
+      <div class="section-head">
+        <p class="eyebrow">Cómo solicitar una cita</p>
+        <h2 id="citas-title">Tres pasos y listo.</h2>
+        <p>Sin formularios largos ni registros. Coordinas todo directamente con el centro.</p>
+      </div>
+      <ol class="steps">
+        {
+          steps.map((s, i) => (
+            <li class="step" data-reveal style={`--reveal-i:${i}`}>
+              <span class="step__icon">
+                <Icon name={s.icon} size={22} />
+              </span>
+              <div>
+                <h3>
+                  <span class="sr-only">Paso {i + 1}: </span>
+                  {s.title}
+                </h3>
+                <p>{s.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+
+    <div class="builder" data-reveal style="--reveal-i:1">
+      <h3 class="builder__title">Prepara tu mensaje</h3>
+      <p class="builder__sub">Elige el servicio y abrimos WhatsApp con el mensaje listo para enviar.</p>
+
+      <noscript>
+        <p class="builder__fallback">
+          <WaLink message={waMessages.general} context="asistente-sin-js" class="btn btn--block">
+            Escribir por WhatsApp
+          </WaLink>
+        </p>
+      </noscript>
+
+      <form class="builder__form" data-wa-builder data-number={site.whatsapp.value} novalidate hidden>
+        <div class="field">
+          <label for="wa-service">Servicio <span aria-hidden="true">*</span></label>
+          <select id="wa-service" name="service" required aria-describedby="wa-service-error">
+            <option value="">Selecciona un servicio</option>
+            {
+              categories.map((c) => (
+                <optgroup label={c.name}>
+                  {services
+                    .filter((s) => s.category === c.id)
+                    .map((s) => (
+                      <option value={s.slug} data-label={s.name}>
+                        {s.name}
+                      </option>
+                    ))}
+                </optgroup>
+              ))
+            }
+            <option value="otro" data-label="otra consulta">Otro / no estoy seguro</option>
+          </select>
+          <p class="field__error" id="wa-service-error" data-error hidden>
+            <Icon name="circle-alert" size={16} /> Selecciona un servicio para preparar tu mensaje.
+          </p>
+        </div>
+
+        <div class="field">
+          <label for="wa-name">Tu nombre <span class="field__opt">(opcional)</span></label>
+          <input id="wa-name" name="name" type="text" maxlength="60" autocomplete="given-name" inputmode="text" />
+        </div>
+
+        <fieldset class="field">
+          <legend>Horario preferido</legend>
+          <div class="seg">
+            <label><input type="radio" name="time" value="" checked /> <span>Cualquiera</span></label>
+            <label><input type="radio" name="time" value="mañana" /> <span>Mañana</span></label>
+            <label><input type="radio" name="time" value="tarde" /> <span>Tarde</span></label>
+          </div>
+        </fieldset>
+
+        <div class="preview" aria-live="polite">
+          <p class="preview__label">Vista previa del mensaje</p>
+          <output class="preview__bubble" for="wa-service wa-name" data-preview>
+            {waMessages.general}
+          </output>
+        </div>
+
+        <p class="builder__privacy">
+          <Icon name="shield-check" size={16} />
+          No incluyas resultados ni datos de salud. Solo lo necesario para coordinar.
+        </p>
+
+        <button type="submit" class="btn btn--block">
+          <BrandIcon name="whatsapp" size={20} /> Abrir WhatsApp
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<style>
+  .citas__grid {
+    display: grid;
+    gap: clamp(2.5rem, 1.5rem + 3vw, 4.5rem);
+    align-items: start;
+  }
+  .steps {
+    list-style: none;
+    display: grid;
+    gap: var(--sp-5);
+    counter-reset: step;
+    position: relative;
+  }
+  .step {
+    position: relative;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--sp-4);
+  }
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 23px;
+    top: 52px;
+    bottom: calc(-1 * var(--sp-5) + 4px);
+    width: 2px;
+    background: linear-gradient(var(--c-turquoise), var(--c-line));
+    border-radius: 2px;
+  }
+  .step__icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--c-bg-tint);
+    color: var(--c-teal-700);
+    border: 1px solid #cfe8e6;
+  }
+  .step h3 {
+    font-size: var(--fs-h3);
+    margin: 0.6rem 0 var(--sp-1);
+  }
+  .step p {
+    color: var(--c-muted);
+  }
+
+  .builder {
+    padding: clamp(1.25rem, 1rem + 1.5vw, 2.25rem);
+    border-radius: var(--r-xl);
+    border: 1px solid var(--c-line);
+    background: #fff;
+    box-shadow: var(--shadow-lg);
+  }
+  .builder__title {
+    font-size: 1.375rem;
+  }
+  .builder__sub {
+    color: var(--c-muted);
+    margin: var(--sp-2) 0 var(--sp-5);
+    font-size: var(--fs-small);
+  }
+  .builder__form {
+    display: grid;
+    gap: var(--sp-5);
+  }
+  .builder__form[hidden] {
+    display: none;
+  }
+  .field {
+    display: grid;
+    gap: var(--sp-2);
+    border: 0;
+    margin: 0;
+    padding: 0;
+    min-width: 0;
+  }
+  .field label,
+  .field legend {
+    font-weight: 600;
+    font-size: var(--fs-small);
+    padding: 0;
+  }
+  .field legend {
+    margin-bottom: var(--sp-2);
+  }
+  .field__opt {
+    font-weight: 400;
+    color: var(--c-muted);
+  }
+  select,
+  input[type='text'] {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 var(--sp-4);
+    border: 1.5px solid var(--c-line-strong);
+    border-radius: var(--r-md);
+    background: #fff;
+    font: inherit;
+    font-size: 1rem; /* evita el zoom automático en iOS */
+    color: var(--c-ink);
+    transition: border-color var(--dur-fast) ease;
+  }
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23183442' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 44px;
+  }
+  select:hover,
+  input[type='text']:hover {
+    border-color: var(--c-muted);
+  }
+  select:focus-visible,
+  input[type='text']:focus-visible {
+    outline: 3px solid var(--c-focus);
+    outline-offset: 1px;
+    border-color: var(--c-focus);
+  }
+  select[aria-invalid='true'] {
+    border-color: var(--c-error);
+  }
+  .field__error {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    color: var(--c-error);
+    font-size: var(--fs-small);
+    font-weight: 500;
+  }
+  .field__error[hidden] {
+    display: none;
+  }
+  .seg {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    padding: 4px;
+    border-radius: var(--r-md);
+    background: var(--c-bg-soft);
+    border: 1px solid var(--c-line);
+  }
+  .seg label {
+    position: relative;
+    cursor: pointer;
+  }
+  .seg input {
+    position: absolute;
+    opacity: 0;
+    inset: 0;
+    cursor: pointer;
+  }
+  .seg span {
+    display: grid;
+    place-items: center;
+    min-height: 40px;
+    border-radius: 10px;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--c-muted);
+    transition:
+      background-color var(--dur-fast) ease,
+      color var(--dur-fast) ease;
+  }
+  .seg input:checked + span {
+    background: #fff;
+    color: var(--c-ink);
+    box-shadow: var(--shadow-sm);
+  }
+  .seg input:focus-visible + span {
+    outline: 3px solid var(--c-focus);
+    outline-offset: 1px;
+  }
+  .preview__label {
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    color: var(--c-muted);
+    margin-bottom: var(--sp-2);
+  }
+  .preview__bubble {
+    display: block;
+    padding: var(--sp-3) var(--sp-4);
+    border-radius: 16px 16px 4px 16px;
+    background: #e7f6f3;
+    font-size: var(--fs-small);
+    line-height: 1.5;
+  }
+  .builder__privacy {
+    display: flex;
+    gap: var(--sp-2);
+    align-items: flex-start;
+    font-size: var(--fs-xs);
+    color: var(--c-muted);
+  }
+  .builder__privacy :global(svg) {
+    flex: none;
+    color: var(--c-teal-700);
+    margin-top: 1px;
+  }
+  @media (min-width: 960px) {
+    .citas__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .builder {
+      position: sticky;
+      top: calc(var(--header-h) + 1.5rem);
+    }
+  }
+</style>

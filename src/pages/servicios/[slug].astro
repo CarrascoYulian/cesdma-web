@@ -1,0 +1,314 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import BrandIcon from '../../components/BrandIcon.astro';
+import WaLink from '../../components/WaLink.astro';
+import { services, categories, serviceUrl, prepNote, type Service } from '../../data/services';
+import { breadcrumbSchema } from '../../lib/schema';
+import { site } from '../../config/site';
+
+export function getStaticPaths() {
+  return services.map((s) => ({ params: { slug: s.slug }, props: { service: s } }));
+}
+
+const { service: s } = Astro.props as { service: Service };
+const cat = categories.find((c) => c.id === s.category)!;
+const related = services.filter((x) => x.category === s.category && x.slug !== s.slug);
+const others = related.length ? related : services.filter((x) => x.featured && x.slug !== s.slug);
+const siteUrl = Astro.site!.href;
+
+const pageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'MedicalWebPage',
+  name: s.name,
+  description: s.seoDescription,
+  url: new URL(serviceUrl(s), siteUrl).href,
+  inLanguage: 'es-DO',
+  about: {
+    '@type': s.category === 'consultas' ? 'MedicalProcedure' : 'MedicalTest',
+    name: s.name,
+  },
+  provider: { '@id': `${siteUrl}#centro`, '@type': 'MedicalClinic', name: site.legalName },
+};
+---
+<Base
+  title={s.seoTitle}
+  description={s.seoDescription}
+  floatingMessage={s.waMessage}
+  schema={[
+    pageSchema,
+    breadcrumbSchema(siteUrl, [
+      { name: 'Inicio', path: '/' },
+      { name: 'Servicios', path: '/servicios/' },
+      { name: s.name, path: serviceUrl(s) },
+    ]),
+  ]}
+>
+  <article class="svc">
+    <header class="svc__hero">
+      <div class="container">
+        <nav aria-label="Ruta de navegación" class="crumbs">
+          <ol>
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/servicios/">Servicios</a></li>
+            <li aria-current="page">{s.short}</li>
+          </ol>
+        </nav>
+        <div class="svc__head">
+          <span class="svc__icon"><Icon name={s.icon} size={32} /></span>
+          <p class="eyebrow">{cat.name}</p>
+          <h1>{s.name}</h1>
+          <p class="svc__lead">{s.intro}</p>
+          <div class="svc__actions">
+            <WaLink message={s.waMessage} context={`pagina:${s.slug}`} class="btn">
+              <BrandIcon name="whatsapp" size={20} />
+              Consultar disponibilidad
+            </WaLink>
+            <a href="/#contacto" class="btn btn--ghost">
+              <Icon name="map-pin" size={18} /> Ubicación
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="container svc__body">
+      <section class="svc__block" aria-labelledby="saber">
+        <h2 id="saber">Lo que conviene saber</h2>
+        <ul class="svc__facts">
+          {s.facts.map((f) => <li><Icon name="check" size={18} /> {f}</li>)}
+        </ul>
+        {
+          s.details.length > 0 && (
+            <>
+              <h3>Modalidades disponibles</h3>
+              <ul class="svc__details">{s.details.map((d) => <li>{d}</li>)}</ul>
+            </>
+          )
+        }
+      </section>
+
+      <section class="svc__block" aria-labelledby="prep">
+        <h2 id="prep">Preparación</h2>
+        <p>{prepNote}</p>
+      </section>
+
+      <aside class="svc__ask" aria-labelledby="ask">
+        <h2 id="ask">Al escribirnos, puedes preguntar por</h2>
+        <ul>
+          {s.askAbout.map((a) => <li><Icon name="message-circle" size={18} /> {a}</li>)}
+        </ul>
+        <WaLink message={s.waMessage} context={`pagina-aside:${s.slug}`} class="btn btn--block">
+          <BrandIcon name="whatsapp" size={20} /> Escribir por WhatsApp
+        </WaLink>
+        <p class="svc__note">Para coordinar basta con tu nombre y el servicio. No envíes resultados ni datos de salud por este medio.</p>
+      </aside>
+
+      <p class="svc__disclaimer">
+        Esta información es general y no sustituye la orientación de tu médico.
+      </p>
+    </div>
+
+    <section class="section section--soft" aria-labelledby="rel">
+      <div class="container">
+        <h2 id="rel" class="rel__title">{related.length ? 'Servicios relacionados' : 'Otros servicios'}</h2>
+        <ul class="rel">
+          {
+            others.map((o) => (
+              <li>
+                <a href={serviceUrl(o)} class="rel__card">
+                  <Icon name={o.icon} size={22} />
+                  <span>
+                    <strong>{o.name}</strong>
+                    <span>{o.summary}</span>
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <a href="/servicios/" class="link-arrow">Ver todos los servicios <Icon name="arrow-right" size={16} /></a>
+      </div>
+    </section>
+  </article>
+</Base>
+
+<style>
+  .svc__hero {
+    padding-block: var(--sp-6) var(--sp-7);
+    background: linear-gradient(180deg, var(--c-bg-soft), #fff);
+    border-bottom: 1px solid var(--c-line);
+  }
+  .crumbs ol {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+    font-size: var(--fs-small);
+    color: var(--c-muted);
+    margin-bottom: var(--sp-6);
+  }
+  .crumbs li + li::before {
+    content: '/';
+    margin-right: var(--sp-2);
+    color: var(--c-line-strong);
+  }
+  .crumbs a {
+    color: var(--c-muted);
+  }
+  .svc__head {
+    display: grid;
+    gap: var(--sp-4);
+    max-width: 46rem;
+  }
+  .svc__icon {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 18px;
+    background: #fff;
+    border: 1px solid var(--c-line);
+    color: var(--c-teal-700);
+    box-shadow: var(--shadow-sm);
+  }
+  h1 {
+    font-size: clamp(2rem, 1.5rem + 2.4vw, 3.25rem);
+    font-weight: 800;
+  }
+  .svc__lead {
+    font-size: var(--fs-lead);
+    color: var(--c-muted);
+  }
+  .svc__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+    padding-top: var(--sp-2);
+  }
+  .svc__body {
+    display: grid;
+    gap: var(--sp-6);
+    padding-block: var(--sp-7);
+  }
+  .svc__block h2,
+  .svc__ask h2 {
+    font-size: 1.375rem;
+    margin-bottom: var(--sp-4);
+  }
+  .svc__block h3 {
+    font-size: 1.125rem;
+    margin: var(--sp-5) 0 var(--sp-3);
+  }
+  .svc__block p {
+    color: var(--c-muted);
+    max-width: var(--w-text);
+  }
+  .svc__facts,
+  .svc__ask ul {
+    list-style: none;
+    display: grid;
+    gap: var(--sp-3);
+  }
+  .svc__facts li,
+  .svc__ask li {
+    display: flex;
+    gap: var(--sp-3);
+    align-items: flex-start;
+  }
+  .svc__facts :global(svg),
+  .svc__ask li :global(svg) {
+    flex: none;
+    margin-top: 3px;
+    color: var(--c-teal-700);
+  }
+  .svc__details {
+    padding-left: 1.2rem;
+    display: grid;
+    gap: var(--sp-1);
+  }
+  .svc__ask {
+    display: grid;
+    gap: var(--sp-4);
+    padding: var(--sp-5);
+    border-radius: var(--r-lg);
+    border: 1px solid var(--c-line);
+    background: #fff;
+    box-shadow: var(--shadow-md);
+    align-self: start;
+  }
+  .svc__ask h2 {
+    margin-bottom: 0;
+  }
+  .svc__note,
+  .svc__disclaimer {
+    font-size: var(--fs-xs);
+    color: var(--c-muted);
+  }
+  .rel__title {
+    font-size: 1.5rem;
+    margin-bottom: var(--sp-5);
+  }
+  .rel {
+    list-style: none;
+    display: grid;
+    gap: var(--sp-3);
+    margin-bottom: var(--sp-5);
+  }
+  .rel__card {
+    display: flex;
+    gap: var(--sp-4);
+    align-items: flex-start;
+    height: 100%;
+    padding: var(--sp-5);
+    border-radius: var(--r-md);
+    background: #fff;
+    border: 1px solid var(--c-line);
+    color: var(--c-ink);
+    text-decoration: none;
+    transition:
+      border-color var(--dur-fast) ease,
+      box-shadow var(--dur-med) ease;
+  }
+  .rel__card:hover {
+    color: var(--c-ink);
+    border-color: var(--c-turquoise);
+    box-shadow: var(--shadow-md);
+  }
+  .rel__card > :global(svg) {
+    flex: none;
+    color: var(--c-teal-700);
+  }
+  .rel__card strong {
+    display: block;
+    font-family: var(--font-display);
+    margin-bottom: var(--sp-1);
+  }
+  .rel__card span span {
+    font-size: var(--fs-small);
+    color: var(--c-muted);
+  }
+  @media (min-width: 720px) {
+    .rel {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 960px) {
+    .svc__body {
+      grid-template-columns: 1.4fr 1fr;
+      column-gap: var(--sp-8);
+    }
+    .svc__ask {
+      grid-column: 2;
+      grid-row: 1 / span 2;
+      position: sticky;
+      top: calc(var(--header-h) + 1.5rem);
+    }
+    .svc__disclaimer {
+      grid-column: 1;
+    }
+    .rel {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

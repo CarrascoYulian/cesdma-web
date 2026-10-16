@@ -1,0 +1,107 @@
+---
+import { site } from '../config/site';
+
+const pillars = [
+  {
+    title: 'Todo en un mismo lugar',
+    text: `Consulta médica, más de ${site.specialtiesCount.value} especialidades, sonografías, laboratorio y estudios del corazón. Menos traslados para ti y tu familia.`,
+  },
+  {
+    title: 'Coordinación directa',
+    text: 'Escribes por WhatsApp y acuerdas con el centro la fecha y el horario que mejor te funcionan.',
+  },
+  {
+    title: 'Claridad antes de tu cita',
+    text: 'Puedes preguntar por la preparación, el precio y la cobertura de tu seguro antes de ir, para llegar con tranquilidad.',
+  },
+];
+---
+<section id="nosotros" class="section section--soft about" aria-labelledby="about-title">
+  <div class="container about__grid">
+    <div class="about__intro" data-reveal>
+      <p class="eyebrow">Sobre CESDMA</p>
+      <h2 id="about-title">Un centro pensado para que cuidar tu salud sea más sencillo.</h2>
+      <p>
+        CESDMA es el <strong>{site.legalName}</strong>. Reúne atención médica y estudios diagnósticos en un solo
+        lugar, para que puedas consultarte, hacerte tus estudios y darles seguimiento sin ir de un sitio a otro.
+      </p>
+    </div>
+
+    <ol class="about__pillars">
+      {
+        pillars.map((p, i) => (
+          <li data-reveal style={`--reveal-i:${i}`}>
+            <span class="about__num" aria-hidden="true">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <div>
+              <h3>{p.title}</h3>
+              <p>{p.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .about__grid {
+    display: grid;
+    gap: clamp(2rem, 1rem + 4vw, 5rem);
+  }
+  .about__intro {
+    display: grid;
+    gap: var(--sp-5);
+    align-content: start;
+  }
+  .about__intro h2 {
+    font-size: var(--fs-h2);
+  }
+  .about__intro p {
+    font-size: var(--fs-lead);
+    color: var(--c-muted);
+  }
+  .about__intro strong {
+    color: var(--c-ink);
+    font-weight: 600;
+  }
+  .about__pillars {
+    list-style: none;
+    display: grid;
+  }
+  .about__pillars li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--sp-5);
+    padding-block: var(--sp-5);
+    border-top: 1px solid var(--c-line-strong);
+  }
+  .about__pillars li:last-child {
+    border-bottom: 1px solid var(--c-line-strong);
+  }
+  .about__num {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: var(--fs-small);
+    color: var(--c-teal-700);
+    padding-top: 0.2rem;
+    min-width: 2ch;
+  }
+  .about__pillars h3 {
+    font-size: var(--fs-h3);
+    margin-bottom: var(--sp-2);
+  }
+  .about__pillars p {
+    color: var(--c-muted);
+  }
+  @media (min-width: 960px) {
+    .about__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    .about__intro {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+</style>

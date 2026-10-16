@@ -1,0 +1,64 @@
+---
+/**
+ * Galería de instalaciones. Solo se muestra si hay fotos reales y
+ * autorizadas en `site.gallery`. No se usan fotos de banco que aparenten
+ * ser el centro.
+ */
+import { site } from '../config/site';
+const imgs = site.gallery;
+---
+{
+  imgs.length > 0 && (
+    <section id="instalaciones" class="section" aria-labelledby="gal-title">
+      <div class="container">
+        <div class="section-head">
+          <p class="eyebrow">Instalaciones</p>
+          <h2 id="gal-title">Conoce el centro</h2>
+        </div>
+        <ul class="gal">
+          {imgs.map((img, i) => (
+            <li class:list={['gal__item', { 'gal__item--wide': i % 3 === 0 }]} data-reveal style={`--reveal-i:${i % 3}`}>
+              <img src={img.src} alt={img.alt} width={img.width} height={img.height} loading="lazy" decoding="async" />
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .gal {
+    list-style: none;
+    display: grid;
+    gap: var(--sp-3);
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .gal__item {
+    border-radius: var(--r-lg);
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+  }
+  .gal__item--wide {
+    grid-column: span 2;
+    aspect-ratio: 16 / 9;
+  }
+  .gal img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--dur-slow) var(--ease-out);
+  }
+  .gal__item:hover img {
+    transform: scale(1.03);
+  }
+  @media (min-width: 960px) {
+    .gal {
+      grid-template-columns: repeat(4, 1fr);
+    }
+    .gal__item--wide {
+      grid-row: span 2;
+      aspect-ratio: auto;
+    }
+  }
+</style>

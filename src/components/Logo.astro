@@ -1,0 +1,42 @@
+---
+/**
+ * Logotipo: emblema oficial (imagen) + nombre "CESDMA" en texto con el
+ * degradado de la marca. El nombre completo lo da el enlace que lo contiene.
+ */
+import { site } from '../config/site';
+interface Props {
+  class?: string;
+  /** Altura del emblema en px */
+  height?: number;
+}
+const { class: className, height = 40 } = Astro.props;
+const width = Math.round((site.logo.width / site.logo.height) * height);
+---
+<span class:list={['logo', className]} style={`--logo-h:${height}px`}>
+  <img src={site.logo.emblem} alt="" width={width} height={height} decoding="async" />
+  <span class="logo__word">{site.shortName}</span>
+</span>
+
+<style>
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(var(--logo-h) * 0.18);
+  }
+  .logo img {
+    height: var(--logo-h);
+    width: auto;
+  }
+  .logo__word {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: calc(var(--logo-h) * 0.58);
+    letter-spacing: 0.02em;
+    line-height: 1;
+    background: linear-gradient(100deg, #0a9f8e 0%, #0b6ca3 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: #0a7f8a;
+    -webkit-text-fill-color: transparent;
+  }
+</style>

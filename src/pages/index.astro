@@ -1,0 +1,32 @@
+---
+import Base from '../layouts/Base.astro';
+import Hero from '../components/Hero.astro';
+import QuickAccess from '../components/QuickAccess.astro';
+import Services from '../components/Services.astro';
+import Sono4D from '../components/Sono4D.astro';
+import Specialties from '../components/Specialties.astro';
+import About from '../components/About.astro';
+import HowTo from '../components/HowTo.astro';
+import Gallery from '../components/Gallery.astro';
+import Location from '../components/Location.astro';
+import Faq from '../components/Faq.astro';
+import { clinicSchema, faqSchema } from '../lib/schema';
+import { faqs } from '../data/faq';
+
+const siteUrl = Astro.site!.href;
+---
+<Base
+  description="Centro médico en La Caleta, Santo Domingo: consulta general, más de 14 especialidades, sonografías 4D, laboratorio y estudios del corazón. Cita por WhatsApp."
+  schema={[clinicSchema(siteUrl), faqSchema(faqs)]}
+>
+  <Hero />
+  <QuickAccess />
+  <Services />
+  <Sono4D />
+  <Specialties />
+  <About />
+  <HowTo />
+  <Gallery />
+  <Location />
+  <Faq />
+</Base>

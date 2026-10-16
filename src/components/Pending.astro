@@ -1,0 +1,15 @@
+---
+/**
+ * Marca visible para datos aún no confirmados por CESDMA.
+ * Se oculta si PUBLIC_SHOW_PENDING=false o si el dato ya está verificado.
+ */
+import { SHOW_PENDING } from '../config/site';
+
+interface Props {
+  verified: boolean;
+  note?: string;
+}
+const { verified, note } = Astro.props;
+const show = SHOW_PENDING && !verified;
+---
+{show && <span class="pending" title={note} data-pending>Por confirmar</span>}

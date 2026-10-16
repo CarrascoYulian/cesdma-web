@@ -1,0 +1,189 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import BrandIcon from '../../components/BrandIcon.astro';
+import WaLink from '../../components/WaLink.astro';
+import { categories, servicesByCategory, serviceUrl } from '../../data/services';
+import { waMessages } from '../../config/whatsapp';
+import { breadcrumbSchema } from '../../lib/schema';
+
+const siteUrl = Astro.site!.href;
+---
+<Base
+  title="Servicios médicos y estudios diagnósticos"
+  description="Consultas, sonografías 4D y musculoesquelética, laboratorio clínico, EKG, ecocardiograma, Doppler, Holter y MAPA en CESDMA, La Caleta, Santo Domingo."
+  schema={[breadcrumbSchema(siteUrl, [{ name: 'Inicio', path: '/' }, { name: 'Servicios', path: '/servicios/' }])]}
+>
+  <header class="page-hero">
+    <div class="container">
+      <nav aria-label="Ruta de navegación" class="crumbs">
+        <ol>
+          <li><a href="/">Inicio</a></li>
+          <li aria-current="page">Servicios</li>
+        </ol>
+      </nav>
+      <p class="eyebrow">Servicios médicos</p>
+      <h1>Consultas y estudios en CESDMA</h1>
+      <p class="lead">Encuentra el servicio que necesitas y escríbenos para coordinar tu cita.</p>
+    </div>
+  </header>
+
+  <div class="container cats">
+    {
+      categories.map((c) => (
+        <section class="cat" aria-labelledby={`cat-${c.id}`}>
+          <div class="cat__head">
+            <span class="cat__icon"><Icon name={c.icon} size={26} /></span>
+            <div>
+              <h2 id={`cat-${c.id}`}>{c.name}</h2>
+              <p>{c.description}</p>
+            </div>
+          </div>
+          <ul class="cat__list">
+            {servicesByCategory(c.id).map((s) => (
+              <li>
+                <a href={serviceUrl(s)} class="row">
+                  <span class="row__name">{s.name}</span>
+                  <span class="row__sum">{s.summary}</span>
+                  <Icon name="arrow-right" size={18} class="row__arrow" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+
+    <div class="cats__cta">
+      <p>¿No encuentras lo que buscas?</p>
+      <WaLink message={waMessages.general} context="servicios-index" class="btn">
+        <BrandIcon name="whatsapp" size={20} /> Pregúntanos por WhatsApp
+      </WaLink>
+    </div>
+  </div>
+</Base>
+
+<style>
+  .page-hero {
+    padding-block: var(--sp-6) var(--sp-7);
+    background: linear-gradient(180deg, var(--c-bg-soft), #fff);
+    border-bottom: 1px solid var(--c-line);
+  }
+  .page-hero .container {
+    display: grid;
+    gap: var(--sp-4);
+  }
+  .crumbs ol {
+    list-style: none;
+    display: flex;
+    gap: var(--sp-2);
+    font-size: var(--fs-small);
+    color: var(--c-muted);
+    margin-bottom: var(--sp-4);
+  }
+  .crumbs li + li::before {
+    content: '/';
+    margin-right: var(--sp-2);
+    color: var(--c-line-strong);
+  }
+  .crumbs a {
+    color: var(--c-muted);
+  }
+  h1 {
+    font-size: clamp(2rem, 1.5rem + 2.4vw, 3.25rem);
+    font-weight: 800;
+  }
+  .lead {
+    font-size: var(--fs-lead);
+    color: var(--c-muted);
+  }
+  .cats {
+    display: grid;
+    gap: var(--sp-7);
+    padding-block: var(--sp-7) var(--sp-8);
+  }
+  .cat {
+    display: grid;
+    gap: var(--sp-5);
+  }
+  .cat__head {
+    display: flex;
+    gap: var(--sp-4);
+    align-items: flex-start;
+  }
+  .cat__icon {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    background: var(--c-bg-tint);
+    color: var(--c-teal-700);
+  }
+  .cat__head h2 {
+    font-size: var(--fs-h3);
+    margin-bottom: var(--sp-1);
+  }
+  .cat__head p {
+    color: var(--c-muted);
+  }
+  .cat__list {
+    list-style: none;
+    border-top: 1px solid var(--c-line);
+  }
+  .row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: var(--sp-1) var(--sp-4);
+    padding: var(--sp-4) var(--sp-2);
+    border-bottom: 1px solid var(--c-line);
+    color: var(--c-ink);
+    text-decoration: none;
+    transition: background-color var(--dur-fast) ease;
+  }
+  .row:hover {
+    background: var(--c-bg-soft);
+    color: var(--c-ink);
+  }
+  .row__name {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.0625rem;
+  }
+  .row__sum {
+    grid-column: 1;
+    color: var(--c-muted);
+    font-size: var(--fs-small);
+  }
+  .row :global(.row__arrow) {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+    color: var(--c-teal-700);
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .row:hover :global(.row__arrow) {
+    transform: translateX(3px);
+  }
+  .cats__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    padding: var(--sp-5) var(--sp-6);
+    border-radius: var(--r-lg);
+    background: var(--c-bg-soft);
+    border: 1px solid var(--c-line);
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.25rem;
+  }
+  @media (min-width: 960px) {
+    .cat {
+      grid-template-columns: 1fr 1.6fr;
+      gap: var(--sp-7);
+    }
+  }
+</style>

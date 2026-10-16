@@ -1,0 +1,183 @@
+---
+import { site, mapsUrl } from '../config/site';
+import { waMessages } from '../config/whatsapp';
+import { services, serviceUrl } from '../data/services';
+import { telLink, waDisplay } from '../lib/whatsapp';
+import Logo from './Logo.astro';
+import BrandIcon from './BrandIcon.astro';
+import WaLink from './WaLink.astro';
+import Pending from './Pending.astro';
+
+const a = site.address.value;
+const year = new Date().getFullYear();
+const hours = site.hours.value;
+---
+<footer class="footer">
+  <div class="container">
+    <div class="footer__grid">
+      <div class="footer__brand">
+        <span class="footer__logo"><Logo height={40} /></span>
+        <p class="footer__name">{site.legalName}</p>
+        <p class="footer__tag">{site.tagline}</p>
+        <a class="footer__social" href={site.instagram.value.url} target="_blank" rel="noopener noreferrer">
+          <BrandIcon name="instagram" size={18} />
+          <span>{site.instagram.value.handle}<span class="sr-only"> en Instagram</span></span>
+        </a>
+      </div>
+
+      <nav class="footer__col" aria-label="Secciones">
+        <h2>Navegación</h2>
+        <ul>
+          <li><a href="/">Inicio</a></li>
+          <li><a href="/servicios/">Servicios</a></li>
+          <li><a href="/#especialidades">Especialidades</a></li>
+          <li><a href="/#nosotros">Sobre nosotros</a></li>
+          <li><a href="/#citas">Cómo pedir una cita</a></li>
+          <li><a href="/#preguntas">Preguntas frecuentes</a></li>
+          <li><a href="/#contacto">Ubicación y contacto</a></li>
+        </ul>
+      </nav>
+
+      <nav class="footer__col" aria-label="Servicios">
+        <h2>Servicios</h2>
+        <ul>
+          {services.map((s) => <li><a href={serviceUrl(s)}>{s.short}</a></li>)}
+        </ul>
+      </nav>
+
+      <div class="footer__col">
+        <h2>Contacto</h2>
+        <ul class="footer__contact">
+          <li>
+            <a href={mapsUrl()} target="_blank" rel="noopener noreferrer">
+              {a.street}, {a.sector}, {a.city}
+            </a>
+            <Pending verified={site.address.verified} />
+          </li>
+          <li>
+            Tel. <a href={telLink()}>{site.phone.value.display}</a>
+            <Pending verified={site.phone.verified} />
+          </li>
+          <li>
+            WhatsApp <WaLink message={waMessages.footer} context="footer">{waDisplay()}</WaLink>
+            <Pending verified={site.whatsapp.verified} />
+          </li>
+          {site.email.value && (
+            <li>
+              Correo <a href={`mailto:${site.email.value}`}>{site.email.value}</a>
+            </li>
+          )}
+          <li>
+            {hours.length ? hours.map((h) => <span class="footer__hours">{h.days}: {h.time}</span>) : 'Horario: consúltalo por WhatsApp'}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p>© {year} {site.shortName}. Todos los derechos reservados.</p>
+      <p class="footer__disclaimer">
+        La información de este sitio es general y no sustituye la consulta con un profesional de la salud.
+      </p>
+      <a href="/privacidad/">Aviso de privacidad</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    background: var(--c-ink);
+    color: #c9d7dd;
+    padding-top: var(--sp-8);
+    padding-bottom: calc(var(--sp-8) + env(safe-area-inset-bottom));
+    font-size: var(--fs-small);
+  }
+  .footer a {
+    color: #fff;
+    text-decoration: none;
+  }
+  .footer a:hover {
+    text-decoration: underline;
+    color: #fff;
+  }
+  .footer :global(:focus-visible) {
+    outline-color: #7fd8d3;
+  }
+  .footer__grid {
+    display: grid;
+    gap: var(--sp-6);
+  }
+  .footer__brand {
+    display: grid;
+    gap: var(--sp-3);
+    justify-items: start;
+    align-content: start;
+    max-width: 22rem;
+  }
+  .footer__logo {
+    display: inline-flex;
+    margin-bottom: var(--sp-2);
+    background: #fff;
+    border-radius: var(--r-md);
+    padding: 10px 14px;
+  }
+  .footer__name {
+    color: #fff;
+    font-weight: 600;
+  }
+  .footer__social {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    min-height: 44px;
+  }
+  .footer__col h2 {
+    font-family: var(--font-body);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-label);
+    text-transform: uppercase;
+    color: #93aab4;
+    margin-bottom: var(--sp-3);
+  }
+  .footer__col ul {
+    list-style: none;
+    display: grid;
+    gap: var(--sp-1);
+  }
+  .footer__col li a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+  }
+  .footer__contact {
+    gap: var(--sp-3) !important;
+  }
+  .footer__hours {
+    display: block;
+  }
+  .footer__bottom {
+    display: grid;
+    gap: var(--sp-2);
+    margin-top: var(--sp-7);
+    padding-top: var(--sp-5);
+    border-top: 1px solid rgb(255 255 255 / 0.14);
+    font-size: var(--fs-xs);
+    color: #a9bcc4;
+  }
+  @media (min-width: 720px) {
+    .footer__grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (min-width: 1024px) {
+    .footer__grid {
+      grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+    }
+    .footer__bottom {
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: var(--sp-5);
+    }
+  }
+</style>

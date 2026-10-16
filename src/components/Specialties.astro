@@ -1,0 +1,202 @@
+---
+import { site, SHOW_PENDING } from '../config/site';
+import { waMessages } from '../config/whatsapp';
+import { getService, serviceUrl } from '../data/services';
+import Icon from './Icon.astro';
+import BrandIcon from './BrandIcon.astro';
+import WaLink from './WaLink.astro';
+import Pending from './Pending.astro';
+
+const list = site.specialties.value;
+const doctors = site.doctors;
+const general = getService('consulta-medica-general')!;
+---
+<section id="especialidades" class="section" aria-labelledby="esp-title">
+  <div class="container">
+    <div class="esp" data-reveal>
+      <div class="esp__count" aria-hidden="true">
+        <span class="esp__plus">+</span>{site.specialtiesCount.value}
+      </div>
+      <div class="esp__body">
+        <p class="eyebrow">Consultas especializadas</p>
+        <h2 id="esp-title">Más de {site.specialtiesCount.value} especialidades médicas</h2>
+        <p class="esp__lead">
+          Si ya sabes qué especialista necesitas, o si tu médico te refirió, escríbenos: te confirmamos la
+          disponibilidad y los días de consulta.
+        </p>
+
+        {
+          list.length > 0 ? (
+            <ul class="esp__list" aria-label="Especialidades disponibles">
+              {list.map((name) => <li>{name}</li>)}
+            </ul>
+          ) : (
+            SHOW_PENDING && <p class="esp__note">
+              Listado de especialidades <Pending verified={false} note={site.specialties.note} />
+            </p>
+          )
+        }
+
+        <div class="esp__actions">
+          <WaLink message={waMessages.specialties} context="especialidades" class="btn">
+            <BrandIcon name="whatsapp" size={20} />
+            Consultar especialidades
+          </WaLink>
+        </div>
+      </div>
+
+      <aside class="esp__tip" aria-labelledby="esp-tip-title">
+        <Icon name="info" size={20} />
+        <div>
+          <h3 id="esp-tip-title">¿No sabes a qué especialista acudir?</h3>
+          <p>
+            Puedes empezar por una <a href={serviceUrl(general)}>consulta médica general</a>. El médico te
+            orientará y, si hace falta, te referirá a la especialidad adecuada.
+          </p>
+        </div>
+      </aside>
+    </div>
+
+    {
+      doctors.length > 0 && (
+        <ul class="doctors" aria-label="Nuestros especialistas">
+          {doctors.map((d) => (
+            <li class="doctor">
+              {d.photo ? (
+                <img src={d.photo} alt={`Foto de ${d.name}`} width="320" height="400" loading="lazy" decoding="async" />
+              ) : (
+                <span class="doctor__ph" aria-hidden="true">
+                  <Icon name="user-round" size={32} />
+                </span>
+              )}
+              <h3>{d.name}</h3>
+              <p class="doctor__spec">{d.specialty}</p>
+              {d.credentials && <p class="doctor__cred">{d.credentials}</p>}
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .esp {
+    display: grid;
+    gap: var(--sp-6);
+    padding: clamp(1.5rem, 1rem + 3vw, 4rem);
+    border-radius: var(--r-xl);
+    background: var(--c-bg-soft);
+    border: 1px solid var(--c-line);
+  }
+  .esp__count {
+    font-family: var(--font-display);
+    font-weight: 800;
+    font-size: clamp(5rem, 3rem + 9vw, 10rem);
+    line-height: 0.85;
+    letter-spacing: -0.06em;
+    color: var(--c-teal-700);
+  }
+  .esp__plus {
+    color: var(--c-turquoise);
+  }
+  .esp__body {
+    display: grid;
+    gap: var(--sp-4);
+    align-content: start;
+  }
+  .esp__body h2 {
+    font-size: var(--fs-h2);
+  }
+  .esp__lead {
+    font-size: var(--fs-lead);
+    color: var(--c-muted);
+  }
+  .esp__list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-2);
+  }
+  .esp__list li {
+    padding: 6px 14px;
+    border-radius: var(--r-pill);
+    background: #fff;
+    border: 1px solid var(--c-line);
+    font-size: var(--fs-small);
+    font-weight: 500;
+  }
+  .esp__note {
+    font-size: var(--fs-small);
+    color: var(--c-muted);
+  }
+  .esp__actions {
+    padding-top: var(--sp-2);
+  }
+  .esp__tip {
+    display: flex;
+    gap: var(--sp-3);
+    padding: var(--sp-5);
+    border-radius: var(--r-lg);
+    background: #fff;
+    border: 1px solid var(--c-line);
+    align-self: end;
+  }
+  .esp__tip > :global(svg) {
+    flex: none;
+    color: var(--c-blue);
+    margin-top: 2px;
+  }
+  .esp__tip h3 {
+    font-size: 1.0625rem;
+    margin-bottom: var(--sp-2);
+  }
+  .esp__tip p {
+    color: var(--c-muted);
+    font-size: var(--fs-small);
+  }
+  @media (min-width: 960px) {
+    .esp {
+      grid-template-columns: auto 1fr;
+      column-gap: clamp(2rem, 1rem + 4vw, 5rem);
+    }
+    .esp__tip {
+      grid-column: 2;
+      max-width: 34rem;
+    }
+  }
+
+  .doctors {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: var(--sp-5);
+    margin-top: var(--sp-7);
+  }
+  .doctor img,
+  .doctor__ph {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: var(--r-lg);
+    margin-bottom: var(--sp-3);
+  }
+  .doctor__ph {
+    display: grid;
+    place-items: center;
+    background: var(--c-bg-tint);
+    color: var(--c-teal-700);
+  }
+  .doctor h3 {
+    font-size: 1.125rem;
+  }
+  .doctor__spec {
+    color: var(--c-teal-700);
+    font-weight: 600;
+    font-size: var(--fs-small);
+  }
+  .doctor__cred {
+    color: var(--c-muted);
+    font-size: var(--fs-xs);
+  }
+</style>

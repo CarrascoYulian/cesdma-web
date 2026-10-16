@@ -1,0 +1,92 @@
+/*
+ * SISTEMA DE DISEÑO CESDMA — tokens
+ * Paleta tomada del logotipo oficial (degradado verde turquesa → azul),
+ * ajustada para contraste WCAG 2.2 AA.
+ *
+ * Contrastes medidos (texto sobre blanco):
+ *   --c-ink        #183442  13.0:1
+ *   --c-muted      #56677A   5.8:1
+ *   --c-teal-700   #0A7378   5.6:1  (botones con texto blanco, enlaces)
+ *   --c-blue       #0b6ca3   5.7:1
+ *   --c-turquoise  #0fb5a0   2.6:1  → SOLO decorativo, nunca texto.
+ */
+:root {
+  /* Marca */
+  --c-turquoise: #0fb5a0;
+  --c-turquoise-soft: #d6f2ee;
+  --c-teal-600: #087f83;
+  --c-teal-700: #0a7378;
+  --c-teal-800: #06666b;
+  --c-teal-900: #0b4a52;
+  --c-blue: #0b6ca3;
+
+  /* Neutros */
+  --c-white: #ffffff;
+  --c-bg: #ffffff;
+  --c-bg-soft: #f4f9fa;
+  --c-bg-tint: #e9f5f4;
+  --c-bg-warm: #faf7f3;
+  --c-ink: #183442;
+  --c-muted: #56677a;
+  --c-line: #dbe7ea;
+  --c-line-strong: #c3d6db;
+
+  /* Estado */
+  --c-pending-bg: #fff4d6;
+  --c-pending-ink: #6b4a00;
+  --c-error: #b42318;
+  --c-success: #0a7a4a;
+  --c-focus: #0b6ca3;
+
+  /* Tipografía */
+  --font-display: 'Manrope Variable', 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'DM Sans Variable', 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --fs-display: clamp(2.25rem, 1.55rem + 3.1vw, 4rem);
+  --fs-h2: clamp(1.75rem, 1.4rem + 1.6vw, 2.75rem);
+  --fs-h3: clamp(1.15rem, 1.07rem + 0.35vw, 1.375rem);
+  --fs-lead: clamp(1.05rem, 1rem + 0.3vw, 1.25rem);
+  --fs-body: 1rem;
+  --fs-small: 0.9375rem;
+  --fs-xs: 0.8125rem;
+  --lh-tight: 1.1;
+  --lh-snug: 1.3;
+  --lh-body: 1.6;
+  --tracking-tight: -0.025em;
+  --tracking-label: 0.08em;
+
+  /* Espaciado (escala 4 px) */
+  --sp-1: 0.25rem;
+  --sp-2: 0.5rem;
+  --sp-3: 0.75rem;
+  --sp-4: 1rem;
+  --sp-5: 1.5rem;
+  --sp-6: 2rem;
+  --sp-7: 3rem;
+  --sp-8: 4rem;
+  --sp-section: clamp(4rem, 2.8rem + 5vw, 7.5rem);
+
+  /* Formas */
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 22px;
+  --r-xl: 32px;
+  --r-pill: 999px;
+
+  /* Sombras discretas */
+  --shadow-sm: 0 1px 2px rgb(24 52 66 / 0.06);
+  --shadow-md: 0 6px 20px -8px rgb(24 52 66 / 0.18);
+  --shadow-lg: 0 24px 48px -24px rgb(24 52 66 / 0.28);
+
+  /* Layout */
+  --w-content: 1200px;
+  --w-text: 62ch;
+  --gutter: clamp(1rem, 0.6rem + 2vw, 2rem);
+  --header-h: 68px;
+
+  /* Movimiento */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 160ms;
+  --dur-med: 280ms;
+  --dur-slow: 600ms;
+}

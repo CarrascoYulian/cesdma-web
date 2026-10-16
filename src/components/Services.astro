@@ -1,0 +1,261 @@
+---
+import { categories, services, serviceUrl } from '../data/services';
+import Icon from './Icon.astro';
+import BrandIcon from './BrandIcon.astro';
+import WaLink from './WaLink.astro';
+
+const catName = Object.fromEntries(categories.map((c) => [c.id, c.short]));
+---
+<section id="servicios" class="section services" aria-labelledby="servicios-title">
+  <div class="container">
+    <div class="services__head">
+      <div class="section-head">
+        <p class="eyebrow">Servicios médicos</p>
+        <h2 id="servicios-title">Lo que puedes hacer en CESDMA</h2>
+        <p>
+          Desde una consulta general hasta tus estudios del corazón. Elige lo que necesitas y te orientamos
+          sobre disponibilidad y preparación.
+        </p>
+      </div>
+
+      <div class="filters" role="group" aria-label="Filtrar servicios por categoría" data-filters hidden>
+        <button type="button" class="filters__btn" aria-pressed="true" data-filter="all">Todos</button>
+        {
+          categories.map((c) => (
+            <button type="button" class="filters__btn" aria-pressed="false" data-filter={c.id}>
+              {c.short}
+            </button>
+          ))
+        }
+      </div>
+    </div>
+    <p class="sr-only" aria-live="polite" data-filter-status></p>
+
+    <ul class="services__grid">
+      {
+        services.map((s, i) => (
+          <li
+            class:list={['card', { 'card--featured': s.featured }]}
+            data-category={s.category}
+            data-reveal
+            style={`--reveal-i:${i % 3}`}
+          >
+            <div class="card__top">
+              <span class="card__icon">
+                <Icon name={s.icon} size={s.featured ? 28 : 22} />
+              </span>
+              <span class="card__cat">{catName[s.category]}</span>
+            </div>
+            <h3 class="card__title">
+              <a href={serviceUrl(s)}>{s.name}</a>
+            </h3>
+            <p class="card__text">{s.summary}</p>
+            <div class="card__actions">
+              <a href={serviceUrl(s)} class="link-arrow card__more">
+                Ver detalles<span class="sr-only"> de {s.short}</span>
+                <Icon name="arrow-right" size={16} />
+              </a>
+              <WaLink message={s.waMessage} context={`servicio:${s.slug}`} class="card__wa">
+                <BrandIcon name="whatsapp" size={16} />
+                Consultar<span class="sr-only"> disponibilidad de {s.short} por WhatsApp</span>
+              </WaLink>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .services__head {
+    display: grid;
+    gap: var(--sp-4);
+    margin-bottom: clamp(2rem, 1.5rem + 2vw, 3rem);
+  }
+  .services__head .section-head {
+    margin-bottom: 0;
+  }
+  .filters {
+    display: flex;
+    gap: var(--sp-2);
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-inline: calc(-1 * var(--gutter));
+    padding: 2px var(--gutter);
+  }
+  .filters::-webkit-scrollbar {
+    display: none;
+  }
+  .filters[hidden] {
+    display: none;
+  }
+  .filters__btn {
+    flex: none;
+    min-height: 44px;
+    padding: 0 var(--sp-4);
+    border-radius: var(--r-pill);
+    border: 1px solid var(--c-line-strong);
+    background: #fff;
+    font-size: var(--fs-small);
+    font-weight: 600;
+    color: var(--c-ink);
+    cursor: pointer;
+    transition:
+      background-color var(--dur-fast) ease,
+      border-color var(--dur-fast) ease,
+      color var(--dur-fast) ease;
+  }
+  .filters__btn:hover {
+    border-color: var(--c-teal-700);
+  }
+  .filters__btn[aria-pressed='true'] {
+    background: var(--c-ink);
+    border-color: var(--c-ink);
+    color: #fff;
+  }
+
+  .services__grid {
+    list-style: none;
+    display: grid;
+    gap: var(--sp-4);
+  }
+  .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sp-3);
+    padding: var(--sp-5);
+    border: 1px solid var(--c-line);
+    border-radius: var(--r-lg);
+    background: #fff;
+    transition:
+      border-color var(--dur-med) ease,
+      box-shadow var(--dur-med) ease,
+      transform var(--dur-med) var(--ease-out);
+  }
+  .card[hidden] {
+    display: none;
+  }
+  .card:hover {
+    border-color: var(--c-line-strong);
+    box-shadow: var(--shadow-md);
+  }
+  .card__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-3);
+  }
+  .card__icon {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--c-bg-tint);
+    color: var(--c-teal-700);
+  }
+  .card__cat {
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--c-muted);
+  }
+  .card__title {
+    font-size: var(--fs-h3);
+    line-height: var(--lh-snug);
+  }
+  .card__title a {
+    color: var(--c-ink);
+    text-decoration: none;
+  }
+  .card__title a:hover {
+    color: var(--c-teal-700);
+  }
+  .card__text {
+    color: var(--c-muted);
+    font-size: var(--fs-small);
+  }
+  .card__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-2) var(--sp-4);
+    margin-top: auto;
+    padding-top: var(--sp-3);
+    border-top: 1px solid var(--c-line);
+  }
+  .card__wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    min-height: 44px;
+    padding: 0 var(--sp-3);
+    margin-right: calc(-1 * var(--sp-3));
+    border-radius: var(--r-pill);
+    color: var(--c-ink);
+    font-size: var(--fs-small);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color var(--dur-fast) ease;
+  }
+  .card__wa :global(svg) {
+    color: var(--c-teal-700);
+  }
+  .card__wa:hover {
+    background: var(--c-bg-soft);
+    color: var(--c-ink);
+  }
+
+  /* Destacados: más presencia, mismo sistema */
+  .card--featured {
+    background: linear-gradient(160deg, var(--c-bg-tint) 0%, #fff 70%);
+    border-color: #cfe8e6;
+  }
+  .card--featured .card__icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+  }
+  .card--featured .card__title {
+    font-size: clamp(1.35rem, 1.2rem + 0.6vw, 1.75rem);
+  }
+  .card--featured .card__text {
+    font-size: 1rem;
+    max-width: 36ch;
+  }
+
+  @media (min-width: 640px) {
+    .services__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (min-width: 1024px) {
+    .services__head {
+      grid-template-columns: 1fr auto;
+      align-items: end;
+    }
+    .filters {
+      margin: 0;
+      padding: 2px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .services__grid {
+      grid-template-columns: repeat(3, 1fr);
+      grid-auto-flow: dense;
+    }
+    .card--featured {
+      grid-column: span 2;
+      padding: var(--sp-6);
+    }
+    .services__grid.is-filtered .card--featured {
+      grid-column: span 1;
+      padding: var(--sp-5);
+    }
+  }
+</style>

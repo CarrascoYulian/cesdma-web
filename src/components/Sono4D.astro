@@ -1,0 +1,158 @@
+---
+import { getService, serviceUrl } from '../data/services';
+import Icon from './Icon.astro';
+import BrandIcon from './BrandIcon.astro';
+import WaLink from './WaLink.astro';
+
+const s = getService('sonografia-4d')!;
+---
+<section id="sonografia-4d" class="section sono" aria-labelledby="sono-title">
+  <div class="container sono__grid">
+    <div class="sono__visual" aria-hidden="true" data-reveal>
+      <svg viewBox="0 0 480 480" fill="none">
+        <circle cx="240" cy="240" r="228" fill="#fff" />
+        {[200, 168, 136, 104].map((r, i) => (
+          <circle class="sono__ring" style={`--i:${i}`} cx="240" cy="240" r={r} stroke={i % 2 ? '#087f83' : '#0fb5a0'} stroke-opacity={0.22 + i * 0.08} stroke-width="1.5" />
+        ))}
+        <circle cx="240" cy="240" r="72" fill="#d6f2ee" />
+        <path
+          d="M240 268c-3 0-30-17-30-38a17 17 0 0 1 30-11 17 17 0 0 1 30 11c0 21-27 38-30 38Z"
+          fill="#0a7378"
+        />
+      </svg>
+      <p class="sono__badge"><Icon name="sparkles" size={16} /> 3D en movimiento</p>
+    </div>
+
+    <div class="sono__copy" data-reveal style="--reveal-i:1">
+      <p class="eyebrow">Sonografía 4D</p>
+      <h2 id="sono-title">Un momento especial para conocer a tu bebé.</h2>
+      <p class="sono__lead">{s.intro}</p>
+      <ul class="sono__facts">
+        {s.facts.map((f) => <li><Icon name="check" size={18} /> {f}</li>)}
+      </ul>
+      <div class="sono__ask">
+        <p class="sono__ask-title">Antes de tu cita, pregúntanos por:</p>
+        <ul>
+          {s.askAbout.map((a) => <li>{a}</li>)}
+        </ul>
+      </div>
+      <div class="sono__actions">
+        <WaLink message={s.waMessage} context="sono4d" class="btn">
+          <BrandIcon name="whatsapp" size={20} />
+          Coordinar mi sonografía 4D
+        </WaLink>
+        <a href={serviceUrl(s)} class="link-arrow">
+          Más sobre la sonografía 4D <Icon name="arrow-right" size={16} />
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .sono {
+    background: var(--c-bg-warm);
+  }
+  .sono__grid {
+    display: grid;
+    gap: clamp(2rem, 1rem + 4vw, 5rem);
+    align-items: center;
+  }
+  .sono__visual {
+    position: relative;
+    max-width: min(440px, 75%);
+    width: 100%;
+    margin-inline: auto;
+  }
+  .sono__visual svg {
+    width: 100%;
+    height: auto;
+  }
+  .sono__badge {
+    position: absolute;
+    right: 4%;
+    bottom: 10%;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-2) var(--sp-4);
+    border-radius: var(--r-pill);
+    background: #fff;
+    border: 1px solid var(--c-line);
+    box-shadow: var(--shadow-md);
+    font-size: var(--fs-small);
+    font-weight: 600;
+  }
+  .sono__badge :global(svg) {
+    color: var(--c-teal-700);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .sono__ring {
+      transform-origin: 240px 240px;
+      animation: ring-in 1.2s var(--ease-out) both;
+      animation-delay: calc(var(--i) * 0.12s);
+    }
+  }
+  @keyframes ring-in {
+    from {
+      opacity: 0;
+      transform: scale(0.92);
+    }
+  }
+  .sono__copy {
+    display: grid;
+    gap: var(--sp-5);
+  }
+  .sono__copy h2 {
+    font-size: var(--fs-h2);
+  }
+  .sono__lead {
+    font-size: var(--fs-lead);
+    color: var(--c-muted);
+  }
+  .sono__facts {
+    list-style: none;
+    display: grid;
+    gap: var(--sp-3);
+  }
+  .sono__facts li {
+    display: flex;
+    gap: var(--sp-3);
+    align-items: flex-start;
+  }
+  .sono__facts :global(svg) {
+    flex: none;
+    margin-top: 3px;
+    color: var(--c-teal-700);
+  }
+  .sono__ask {
+    padding: var(--sp-4) var(--sp-5);
+    border-radius: var(--r-md);
+    background: #fff;
+    border: 1px solid var(--c-line);
+  }
+  .sono__ask-title {
+    font-weight: 600;
+    margin-bottom: var(--sp-2);
+  }
+  .sono__ask ul {
+    padding-left: 1.1rem;
+    color: var(--c-muted);
+    display: grid;
+    gap: var(--sp-1);
+  }
+  .sono__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-3) var(--sp-5);
+  }
+  @media (min-width: 960px) {
+    .sono__grid {
+      grid-template-columns: 0.9fr 1.1fr;
+    }
+    .sono__visual {
+      max-width: 440px;
+    }
+  }
+</style>

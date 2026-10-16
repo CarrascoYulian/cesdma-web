@@ -1,0 +1,111 @@
+---
+import { faqs } from '../data/faq';
+import { waMessages } from '../config/whatsapp';
+import Icon from './Icon.astro';
+import WaLink from './WaLink.astro';
+import Pending from './Pending.astro';
+---
+<section id="preguntas" class="section" aria-labelledby="faq-title">
+  <div class="container faq">
+    <div class="section-head faq__head">
+      <p class="eyebrow">Preguntas frecuentes</p>
+      <h2 id="faq-title">Antes de tu cita</h2>
+      <p>Respuestas rápidas a lo que más nos preguntan. Si tu duda no está aquí, escríbenos.</p>
+    </div>
+
+    <div class="faq__list">
+      {
+        faqs.map((f, i) => (
+          <details class="faq__item" name="faq" open={i === 0}>
+            <summary>
+              <span>{f.q}</span>
+              <Icon name="plus" size={20} class="faq__icon" />
+            </summary>
+            <div class="faq__answer">
+              <p>
+                {f.a}
+                <Pending verified={f.verified} note="Respuesta general: CESDMA debe revisarla." />
+              </p>
+              {f.wa && (
+                <WaLink message={waMessages[f.wa]} context={`faq:${f.wa}`} class="link-arrow">
+                  Preguntar por WhatsApp <Icon name="arrow-right" size={16} />
+                </WaLink>
+              )}
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq {
+    display: grid;
+    gap: var(--sp-6);
+  }
+  .faq__head {
+    margin-bottom: 0;
+  }
+  .faq__list {
+    border-top: 1px solid var(--c-line-strong);
+  }
+  .faq__item {
+    border-bottom: 1px solid var(--c-line-strong);
+  }
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sp-4);
+    min-height: 64px;
+    padding-block: var(--sp-4);
+    font-family: var(--font-display);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    line-height: 1.35;
+    cursor: pointer;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary:hover {
+    color: var(--c-teal-700);
+  }
+  summary :global(.faq__icon) {
+    flex: none;
+    color: var(--c-teal-700);
+    transition: transform var(--dur-med) var(--ease-out);
+  }
+  details[open] summary :global(.faq__icon) {
+    transform: rotate(45deg);
+  }
+  .faq__answer {
+    display: grid;
+    gap: var(--sp-2);
+    padding-bottom: var(--sp-5);
+    max-width: var(--w-text);
+    color: var(--c-muted);
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    details[open] .faq__answer {
+      animation: faq-in var(--dur-med) var(--ease-out);
+    }
+  }
+  @keyframes faq-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+  }
+  @media (min-width: 960px) {
+    .faq {
+      grid-template-columns: 0.8fr 1.2fr;
+      gap: var(--sp-8);
+    }
+    .faq__head {
+      align-content: start;
+    }
+  }
+</style>

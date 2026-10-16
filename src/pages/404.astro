@@ -1,0 +1,37 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+---
+<Base title="Página no encontrada" description="La página que buscas no existe." noindex>
+  <section class="container nf">
+    <p class="eyebrow">Error 404</p>
+    <h1>No encontramos esta página.</h1>
+    <p>Es posible que el enlace haya cambiado. Puedes volver al inicio o ver nuestros servicios.</p>
+    <div class="nf__actions">
+      <a href="/" class="btn"><Icon name="house" size={18} /> Ir al inicio</a>
+      <a href="/servicios/" class="btn btn--ghost">Ver servicios</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    display: grid;
+    gap: var(--sp-4);
+    justify-items: start;
+    padding-block: var(--sp-8);
+    min-height: 50vh;
+    align-content: center;
+  }
+  h1 {
+    font-size: var(--fs-h2);
+  }
+  p:not(.eyebrow) {
+    color: var(--c-muted);
+  }
+  .nf__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+  }
+</style>

@@ -1,0 +1,33 @@
+{
+  "name": "cesdma-web",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Sitio web oficial de CESDMA, Centro de Sonografía y Diagnósticos Médico Dra. Cruzveris Martínez",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "check:data": "node --experimental-strip-types --no-warnings scripts/check-data.mjs",
+    "check:data:strict": "node --experimental-strip-types --no-warnings scripts/check-data.mjs --strict",
+    "test": "node tests/run-tests.mjs",
+    "test:lighthouse": "bash tests/lighthouse.sh",
+    "images": "node scripts/make-images.mjs",
+    "test:csp": "node tests/csp.mjs"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/sitemap": "^3.7.4",
+    "@fontsource-variable/dm-sans": "^5.3.0",
+    "@fontsource-variable/manrope": "^5.3.0",
+    "astro": "^7.3.8",
+    "lucide": "^1.57.0",
+    "simple-icons": "^16.35.0",
+    "typescript": "^5.9.3"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "lighthouse": "^13.5.0",
+    "playwright": "^1.55.1"
+  }
+}

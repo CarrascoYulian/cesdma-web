@@ -1,0 +1,274 @@
+---
+import { site, mapsUrl, directionsUrl, mapEmbedUrl } from '../config/site';
+import { waMessages } from '../config/whatsapp';
+import { telLink, waDisplay } from '../lib/whatsapp';
+import Icon from './Icon.astro';
+import BrandIcon from './BrandIcon.astro';
+import WaLink from './WaLink.astro';
+import Pending from './Pending.astro';
+
+const a = site.address.value;
+const hours = site.hours.value;
+---
+<section id="contacto" class="section section--soft" aria-labelledby="contacto-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">Ubicación y contacto</p>
+      <h2 id="contacto-title">Visítanos o escríbenos cuando lo necesites.</h2>
+    </div>
+
+    <div class="loc">
+      <div class="loc__info" data-reveal>
+        <dl class="loc__list">
+          <div class="loc__row">
+            <dt><Icon name="map-pin" size={20} /> Dirección</dt>
+            <dd>
+              <address>
+                {a.street}<br />
+                {a.sector}<br />
+                {a.city}, {a.countryName}
+              </address>
+              <p class="loc__ref">{a.reference}</p>
+              <Pending verified={site.address.verified} note={site.address.note} />
+            </dd>
+          </div>
+          <div class="loc__row">
+            <dt><Icon name="clock" size={20} /> Horario</dt>
+            <dd>
+              {
+                hours.length ? (
+                  <ul class="loc__hours">
+                    {hours.map((h) => (
+                      <li>
+                        <span>{h.days}</span>
+                        <span>{h.time}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>
+                    Escríbenos por WhatsApp para confirmar el horario de atención.
+                    <Pending verified={false} note={site.hours.note} />
+                  </p>
+                )
+              }
+            </dd>
+          </div>
+          <div class="loc__row">
+            <dt><Icon name="phone" size={20} /> Teléfono</dt>
+            <dd>
+              <a href={telLink()}>{site.phone.value.display}</a>
+              <Pending verified={site.phone.verified} note={site.phone.note} />
+            </dd>
+          </div>
+          <div class="loc__row">
+            <dt><BrandIcon name="whatsapp" size={18} /> WhatsApp</dt>
+            <dd>
+              <WaLink message={waMessages.location} context="contacto-numero">{waDisplay()}</WaLink>
+              <Pending verified={site.whatsapp.verified} note={site.whatsapp.note} />
+            </dd>
+          </div>
+          {site.email.value && (
+            <div class="loc__row">
+              <dt><Icon name="mail" size={20} /> Correo</dt>
+              <dd>
+                <a href={`mailto:${site.email.value}`}>{site.email.value}</a>
+              </dd>
+            </div>
+          )}
+          <div class="loc__row">
+            <dt><BrandIcon name="instagram" size={18} /> Instagram</dt>
+            <dd>
+              <a href={site.instagram.value.url} target="_blank" rel="noopener noreferrer">{site.instagram.value.handle}</a>
+            </dd>
+          </div>
+        </dl>
+
+        <div class="loc__actions">
+          <WaLink message={waMessages.location} context="contacto" class="btn">
+            <BrandIcon name="whatsapp" size={20} /> Escribir por WhatsApp
+          </WaLink>
+          <a href={directionsUrl()} class="btn btn--ghost" target="_blank" rel="noopener noreferrer">
+            <Icon name="navigation" size={18} /> Cómo llegar
+          </a>
+        </div>
+      </div>
+
+      <div class="loc__map" data-map data-src={mapEmbedUrl()} data-reveal style="--reveal-i:1">
+        <div class="loc__map-facade">
+          <svg class="loc__map-art" viewBox="0 0 400 300" aria-hidden="true" preserveAspectRatio="xMidYMid slice">
+            <rect width="400" height="300" fill="#eaf3f4" />
+            <path d="M-10 210 C 90 180, 160 240, 260 200 S 380 150, 420 170" stroke="#cfe3e6" stroke-width="26" fill="none" />
+            <path d="M120 -10 L150 320" stroke="#fff" stroke-width="12" />
+            <path d="M-10 90 L420 120" stroke="#fff" stroke-width="10" />
+            <path d="M280 -10 L250 320" stroke="#fff" stroke-width="8" />
+            <path d="M-10 250 L420 280" stroke="#fff" stroke-width="6" />
+            <circle cx="200" cy="140" r="34" fill="#0fb5a0" fill-opacity=".15" />
+          </svg>
+          <span class="loc__pin" aria-hidden="true"><Icon name="map-pin" size={28} strokeWidth={2} /></span>
+          <div class="loc__map-cta">
+            <button type="button" class="btn btn--sm" data-map-load hidden>
+              <Icon name="map" size={18} /> Ver mapa interactivo
+            </button>
+            <a href={mapsUrl()} class="btn btn--sm btn--ghost loc__open" target="_blank" rel="noopener noreferrer">
+              Abrir en Google Maps <Icon name="external-link" size={16} />
+            </a>
+            <p class="loc__map-note">Al cargar el mapa, Google puede recibir datos de tu navegación.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .loc {
+    display: grid;
+    gap: var(--sp-5);
+  }
+  .loc__info {
+    display: grid;
+    gap: var(--sp-5);
+    align-content: start;
+    padding: clamp(1.25rem, 1rem + 1.5vw, 2.25rem);
+    border-radius: var(--r-xl);
+    background: #fff;
+    border: 1px solid var(--c-line);
+  }
+  .loc__list {
+    display: grid;
+    margin: 0;
+  }
+  .loc__row {
+    display: grid;
+    gap: var(--sp-2);
+    padding-block: var(--sp-4);
+    border-bottom: 1px solid var(--c-line);
+  }
+  .loc__row:first-child {
+    padding-top: 0;
+  }
+  dt {
+    display: flex;
+    align-items: center;
+    gap: var(--sp-2);
+    font-size: var(--fs-xs);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--c-muted);
+  }
+  dt :global(svg) {
+    color: var(--c-teal-700);
+  }
+  dd {
+    margin: 0;
+    font-size: 1.0625rem;
+  }
+  dd a {
+    font-weight: 600;
+  }
+  address {
+    font-style: normal;
+    line-height: 1.5;
+  }
+  .loc__ref {
+    margin-top: var(--sp-1);
+    font-size: var(--fs-small);
+    color: var(--c-muted);
+  }
+  .loc__hours {
+    list-style: none;
+    display: grid;
+    gap: var(--sp-1);
+  }
+  .loc__hours li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--sp-4);
+  }
+  .loc__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sp-3);
+  }
+
+  .loc__map {
+    position: relative;
+    min-height: 340px;
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    border: 1px solid var(--c-line);
+    background: #eaf3f4;
+  }
+  .loc__map :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .loc__map-facade {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+  .loc__map-art {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .loc__pin {
+    position: absolute;
+    top: 38%;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50% 50% 50% 4px;
+    rotate: -45deg;
+    background: var(--c-teal-700);
+    color: #fff;
+    box-shadow: var(--shadow-md);
+  }
+  .loc__pin :global(svg) {
+    rotate: 45deg;
+  }
+  .loc__map-cta {
+    position: absolute;
+    left: var(--sp-4);
+    right: var(--sp-4);
+    bottom: var(--sp-4);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sp-2);
+    padding: var(--sp-4);
+    border-radius: var(--r-md);
+    background: rgb(255 255 255 / 0.94);
+    box-shadow: var(--shadow-md);
+  }
+  .loc__map-cta [hidden] {
+    display: none;
+  }
+  .loc__open {
+    background: #fff;
+  }
+  .loc__map-note {
+    flex-basis: 100%;
+    font-size: var(--fs-xs);
+    color: var(--c-muted);
+  }
+  @media (min-width: 960px) {
+    .loc {
+      grid-template-columns: 0.9fr 1.1fr;
+    }
+    .loc__map {
+      min-height: 100%;
+    }
+  }
+</style>
