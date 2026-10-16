@@ -45,12 +45,12 @@ import { slides, src, srcset } from '../data/photos';
               data-slide
             >
               <img
-                src={src(s.photo, 1200)}
-                srcset={srcset(s.photo, [800, 1200])}
+                src={src(s.photo, 1400)}
+                srcset={srcset(s.photo, [800, 1400, 2000])}
                 sizes="(min-width: 1024px) 66vw, 100vw"
                 alt={s.photo.alt}
-                width="1200"
-                height="800"
+                width="2000"
+                height="1333"
                 loading={i === 0 ? 'eager' : 'lazy'}
                 fetchpriority={i === 0 ? 'high' : 'low'}
                 decoding={i === 0 ? 'sync' : 'async'}
@@ -69,6 +69,11 @@ import { slides, src, srcset } from '../data/photos';
       </div>
 
       <div class="carousel__controls" data-carousel-controls hidden>
+        <!-- Solo visible al llegar con el teclado: permite detener el movimiento (WCAG 2.2.2). -->
+        <button type="button" class="carousel__pause" data-carousel-play aria-label="Pausar el carrusel" data-state="paused">
+          <Icon name="pause" size={16} class="carousel__icon-pause" />
+          <Icon name="play" size={16} class="carousel__icon-play" />
+        </button>
         <div class="carousel__dots" role="group" aria-label="Elegir imagen">
           {
             slides.map((s, i) => (
@@ -82,16 +87,6 @@ import { slides, src, srcset } from '../data/photos';
             ))
           }
         </div>
-        <button type="button" class="carousel__btn" data-carousel-play aria-label="Pausar el carrusel" data-state="paused">
-          <Icon name="pause" size={18} class="carousel__icon-pause" />
-          <Icon name="play" size={18} class="carousel__icon-play" />
-        </button>
-        <button type="button" class="carousel__btn" data-carousel-prev aria-label="Imagen anterior">
-          <Icon name="chevron-left" size={20} />
-        </button>
-        <button type="button" class="carousel__btn" data-carousel-next aria-label="Imagen siguiente">
-          <Icon name="chevron-right" size={20} />
-        </button>
       </div>
     </section>
   </div>
@@ -227,33 +222,31 @@ import { slides, src, srcset } from '../data/photos';
     color: var(--c-muted);
   }
 
+  /* Puntos tradicionales, centrados abajo de la foto. */
   .carousel__controls {
     position: absolute;
     z-index: 3;
-    right: var(--sp-3);
+    left: 50%;
     bottom: calc(2.5rem + var(--sp-2));
+    transform: translateX(-50%);
     display: flex;
     align-items: center;
-    gap: 2px;
-    padding: 0 4px;
-    border-radius: var(--r-pill);
-    background: rgb(255 255 255 / 0.94);
-    box-shadow: var(--shadow-md);
   }
   .carousel__controls[hidden] {
     display: none;
   }
   .carousel__dots {
     display: flex;
-    margin-right: var(--sp-1);
+    gap: 2px;
   }
   .carousel__dot {
     display: grid;
     place-items: center;
-    width: 28px;
-    height: 44px;
+    width: 24px;
+    height: 24px;
     padding: 0;
     border: 0;
+    border-radius: var(--r-pill);
     background: none;
     cursor: pointer;
   }
@@ -262,32 +255,42 @@ import { slides, src, srcset } from '../data/photos';
     width: 10px;
     height: 10px;
     border-radius: var(--r-pill);
-    border: 2px solid var(--c-teal-700);
+    background: rgb(255 255 255 / 0.6);
+    box-shadow: 0 0 0 1px rgb(24 52 66 / 0.45);
     transition:
-      width var(--dur-fast) ease,
-      background-color var(--dur-fast) ease;
+      background-color var(--dur-fast) ease,
+      transform var(--dur-fast) ease;
+  }
+  .carousel__dot:hover::before {
+    background: #fff;
   }
   .carousel__dot[aria-current='true']::before {
-    width: 22px;
-    background: var(--c-teal-700);
+    background: #fff;
+    transform: scale(1.25);
+    box-shadow: 0 0 0 1px rgb(24 52 66 / 0.6), 0 1px 4px rgb(0 0 0 / 0.3);
   }
-  .carousel__btn {
+  .carousel__pause {
+    position: absolute;
+    right: calc(100% + var(--sp-2));
     display: grid;
     place-items: center;
-    width: 44px;
-    height: 44px;
-    border-radius: var(--r-pill);
+    width: 36px;
+    height: 36px;
     border: 0;
-    background: none;
+    border-radius: var(--r-pill);
+    background: #fff;
     color: var(--c-ink);
+    box-shadow: var(--shadow-md);
     cursor: pointer;
-    transition: background-color var(--dur-fast) ease;
   }
-  .carousel__btn:hover {
-    background: var(--c-bg-soft);
+  .carousel__pause:not(:focus-visible) {
+    clip-path: inset(50%);
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
   }
-  .carousel__btn[data-state='playing'] :global(.carousel__icon-play),
-  .carousel__btn[data-state='paused'] :global(.carousel__icon-pause) {
+  .carousel__pause[data-state='playing'] :global(.carousel__icon-play),
+  .carousel__pause[data-state='paused'] :global(.carousel__icon-pause) {
     display: none;
   }
 
@@ -322,14 +325,21 @@ import { slides, src, srcset } from '../data/photos';
     }
   }
 
+  @media (max-width: 1023px) {
+    /* En móvil los puntos quedan sobre el blanco del degradado. */
+    .carousel__dot::before {
+      background: transparent;
+      box-shadow: inset 0 0 0 2px var(--c-teal-700);
+    }
+    .carousel__dot:hover::before,
+    .carousel__dot[aria-current='true']::before {
+      background: var(--c-teal-700);
+      box-shadow: none;
+    }
+  }
   @media (max-width: 479px) {
     .hero__actions .btn {
       flex: 1 1 100%;
-    }
-    /* En pantallas pequeñas bastan los puntos, la pausa y el deslizamiento. */
-    .carousel__btn[data-carousel-prev],
-    .carousel__btn[data-carousel-next] {
-      display: none;
     }
   }
   @media (min-width: 720px) {
@@ -377,7 +387,6 @@ import { slides, src, srcset } from '../data/photos';
       align-items: flex-end;
     }
     .carousel__controls {
-      right: var(--sp-5);
       bottom: var(--sp-5);
     }
   }

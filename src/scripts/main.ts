@@ -214,9 +214,10 @@ function initActiveNav() {
 
 /* ---------- Carrusel del inicio ----------
  * Banner del inicio: cambia de imagen cada 3 segundos. Patrón de
- * carrusel de WAI-ARIA: se detiene al enfocar un elemento dentro, tiene
- * botón de pausa y no avanza solo si la persona pidió reducir el
- * movimiento.
+ * carrusel de WAI-ARIA: se detiene al enfocar un elemento dentro o al
+ * elegir una imagen con los puntos o deslizando, tiene un botón de pausa
+ * que aparece al llegar con el teclado y no avanza solo si la persona
+ * pidió reducir el movimiento.
  */
 function initCarousel() {
   const root = $('[data-carousel]');
@@ -260,18 +261,11 @@ function initCarousel() {
     sync();
   };
 
-  $('[data-carousel-prev]', root)?.addEventListener('click', () => {
-    show(current - 1);
-    sync();
-  });
-  $('[data-carousel-next]', root)?.addEventListener('click', () => {
-    show(current + 1);
-    sync();
-  });
+  // Si la persona elige una imagen, el banner deja de avanzar solo.
   dots.forEach((d, i) =>
     d.addEventListener('click', () => {
       show(i);
-      sync();
+      setPlaying(false);
     }),
   );
   play.addEventListener('click', () => setPlaying(!playing));
@@ -306,7 +300,7 @@ function initCarousel() {
       const dy = e.changedTouches[0].clientY - startY;
       if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
         show(current + (dx < 0 ? 1 : -1));
-        sync();
+        setPlaying(false);
       }
     },
     { passive: true },

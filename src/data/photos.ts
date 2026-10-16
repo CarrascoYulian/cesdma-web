@@ -1,21 +1,28 @@
 /**
  * FOTOS ILUSTRATIVAS
  * ------------------------------------------------------------------
- * Fotos de bancos de imágenes de libre uso (dominio público, CC0).
+ * Fotos de bancos de imágenes de libre uso: dominio público (CC0) o la
+ * licencia gratuita de Burst, que permite uso comercial sin atribución.
  * NO muestran el centro, sus equipos ni a su personal: en la web se
  * marcan como "Imagen ilustrativa" y se acreditan en /creditos/.
  *
- * Los archivos están en /public/img/ en webp 3:2 (carrusel: -800 y
- * -1200; tarjetas: -480 y -800) y se generan con
+ * Los archivos están en /public/img/ en webp 3:2 (banner: -800, -1400
+ * y -2000; tarjetas: -480 y -800) y se generan con
  * `node scripts/make-photos.mjs <carpeta-originales>`.
  * Cuando CESDMA entregue fotos reales y autorizadas, basta con
  * reemplazar los archivos o cambiar `file` aquí.
  */
 
+export interface License {
+  name: string;
+  url: string;
+}
+
 export interface Credit {
   author: string;
-  source: 'StockSnap' | 'rawpixel';
+  source: 'StockSnap' | 'rawpixel' | 'Burst';
   url: string;
+  license: License;
 }
 
 export interface Photo {
@@ -25,13 +32,22 @@ export interface Photo {
   credit: Credit;
 }
 
-export const LICENSE = {
-  name: 'CC0 1.0 (dominio público)',
-  url: 'https://creativecommons.org/publicdomain/zero/1.0/deed.es',
-};
+export const LICENSES = {
+  cc0: { name: 'CC0 1.0 (dominio público)', url: 'https://creativecommons.org/publicdomain/zero/1.0/deed.es' },
+  burst: {
+    name: 'Licencia Burst (uso libre, también comercial)',
+    url: 'https://www.shopify.com/stock-photos/licenses/shopify-some-rights-reserved',
+  },
+} satisfies Record<string, License>;
 
-const ss = (author: string, url: string): Credit => ({ author, source: 'StockSnap', url });
-const rp = (author: string, url: string): Credit => ({ author, source: 'rawpixel', url });
+const ss = (author: string, url: string): Credit => ({ author, source: 'StockSnap', url, license: LICENSES.cc0 });
+const rp = (author: string, url: string): Credit => ({ author, source: 'rawpixel', url, license: LICENSES.cc0 });
+const bu = (author: string, slug: string): Credit => ({
+  author,
+  source: 'Burst',
+  url: `https://www.shopify.com/stock-photos/photos/${slug}`,
+  license: LICENSES.burst,
+});
 
 /** Diapositivas del carrusel del inicio. */
 export interface Slide {
@@ -44,23 +60,23 @@ export interface Slide {
 export const photos = {
   'hero-consulta': {
     file: 'hero-consulta',
-    alt: 'Médico conversando con un paciente en un consultorio',
-    credit: ss('Direct Media', 'https://stocksnap.io/photo/doctor-patient-7NQJS4WWQW'),
+    alt: 'Doctora conversa con un paciente en un consultorio',
+    credit: bu('Shopify Partners', 'doctor-and-patient-in-a-doctors-office'),
   },
   'hero-sono': {
     file: 'hero-sono',
-    alt: 'Paciente embarazada observa en una pantalla la imagen de su sonografía',
-    credit: rp('rawpixel', 'https://www.rawpixel.com/image/5924602/photo-image-public-domain-technology-free'),
+    alt: 'Mujer embarazada con vestido blanco sostiene su vientre',
+    credit: bu('Farah', 'pregnant-woman-in-a-white-dress-holds-her-belly'),
   },
   'hero-lab': {
     file: 'hero-lab',
-    alt: 'Tubos de muestras de sangre organizados en una gradilla de laboratorio',
-    credit: rp('U.S. Forest Service', 'https://www.rawpixel.com/image/8729593/photo-image-public-domain-japan'),
+    alt: 'Mano con guante sostiene un tubo con una muestra',
+    credit: bu('Sarah Pflug', 'gloved-hand-and-test-tube'),
   },
   'hero-cardio': {
     file: 'hero-cardio',
-    alt: 'Profesional de la salud toma la presión arterial a un paciente',
-    credit: rp('U.S. Embassy Ghana', 'https://www.rawpixel.com/image/8714719/photo-image-public-domain-woman-people'),
+    alt: 'Profesional de la salud muestra un estetoscopio',
+    credit: bu('Matthew Henry', 'male-doctor-holding-out-stethoscope'),
   },
   'consulta-medica-general': {
     file: 'consulta-medica-general',
@@ -143,7 +159,7 @@ export const slides: Slide[] = [
   },
 ];
 
-/** srcset para una foto: tarjetas 480/800, carrusel 800/1200. */
+/** srcset para una foto: tarjetas 480/800, banner 800/1400/2000. */
 export const srcset = (p: Photo, sizes: number[]) =>
   sizes.map((w) => `/img/${p.file}-${w}.webp ${w}w`).join(', ');
 export const src = (p: Photo, w: number) => `/img/${p.file}-${w}.webp`;

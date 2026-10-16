@@ -1,6 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
-import { photos, LICENSE, thumb, type Photo } from '../data/photos';
+import { photos, thumb, type Photo } from '../data/photos';
 
 const list = Object.values(photos) as Photo[];
 ---
@@ -9,9 +9,8 @@ const list = Object.values(photos) as Photo[];
     <h1>Créditos de imágenes</h1>
     <p>
       Las fotos de este sitio son <strong>imágenes ilustrativas</strong> de bancos de imágenes de libre uso. No muestran
-      las instalaciones, los equipos ni al personal de CESDMA. Todas se publican bajo{' '}
-      <a href={LICENSE.url} target="_blank" rel="noopener noreferrer">{LICENSE.name}</a>, por lo que no requieren
-      atribución; aun así, las acreditamos.
+      las instalaciones, los equipos ni al personal de CESDMA. Sus licencias permiten usarlas sin atribución; aun así,
+      las acreditamos.
     </p>
 
     <ul class="credits">
@@ -25,6 +24,11 @@ const list = Object.values(photos) as Photo[];
                 {p.credit.author} ·{' '}
                 <a href={p.credit.url} target="_blank" rel="noopener noreferrer">
                   {p.credit.source}
+                  <span class="sr-only"> (abre en otra pestaña)</span>
+                </a>{' '}
+                ·{' '}
+                <a href={p.credit.license.url} target="_blank" rel="noopener noreferrer">
+                  {p.credit.license.name}
                   <span class="sr-only"> (abre en otra pestaña)</span>
                 </a>
               </p>

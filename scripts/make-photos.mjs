@@ -1,7 +1,7 @@
 // Optimiza las fotos ilustrativas (src/data/photos.ts) para la web.
 // Entrada: una carpeta con <nombre>.jpg (originales descargados del banco).
 // Salida: public/img/<nombre>-<ancho>.webp, recortadas a 3:2.
-//   - hero-*: 800 y 1200 px  (carrusel del inicio)
+//   - hero-*: 800, 1400 y 2000 px (banner del inicio)
 //   - resto:  480 y 800 px   (tarjetas de servicio)
 // Uso: node scripts/make-photos.mjs <carpeta-originales>
 import sharp from 'sharp';
@@ -18,13 +18,14 @@ fs.mkdirSync(out, { recursive: true });
 
 for (const f of fs.readdirSync(src).filter((f) => f.endsWith('.jpg'))) {
   const name = f.replace(/\.jpg$/, '');
-  const widths = name.startsWith('hero-') ? [800, 1200] : [480, 800];
+  const hero = name.startsWith('hero-');
+  const widths = hero ? [800, 1400, 2000] : [480, 800];
   for (const w of widths) {
     const file = path.join(out, `${name}-${w}.webp`);
     await sharp(path.join(src, f))
       .rotate()
       .resize(w, Math.round((w * 2) / 3), { fit: 'cover', position: 'centre' })
-      .webp({ quality: 74, effort: 6 })
+      .webp({ quality: hero ? 86 : 74, effort: 6 })
       .toFile(file);
     console.log(path.relative(process.cwd(), file), Math.round(fs.statSync(file).size / 1024) + ' KB');
   }
